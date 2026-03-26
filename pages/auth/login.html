@@ -1,0 +1,192 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - KnowVault AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="{% static 'styles/output.css' %}" rel="stylesheet">
+    <style>
+        * { font-family: Inter, system-ui, sans-serif; }
+        .auth-layout { display: flex; min-height: 100vh; }
+        .auth-brand { display: none; position: relative; flex: 1; background: linear-gradient(135deg, rgb(15,23,42) 0%, rgb(30,41,59) 50%, rgb(15,23,42) 100%); overflow: hidden; }
+        .auth-form-side { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 24px; background: white; }
+        @media (min-width: 1024px) {
+            .auth-brand { display: flex; align-items: center; justify-content: center; }
+        }
+        .brand-glow { position: absolute; width: 400px; height: 400px; border-radius: 50%; filter: blur(100px); }
+        .glass-card { background: rgba(255,255,255,0.06); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 32px; }
+        .fade-up { opacity: 0; transform: translateY(20px); animation: fadeUp 0.6s ease forwards; }
+        .fd1 { animation-delay: .1s; } .fd2 { animation-delay: .2s; } .fd3 { animation-delay: .3s; } .fd4 { animation-delay: .4s; }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+        .float-anim { animation: floatY 6s ease-in-out infinite; }
+        @keyframes floatY { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        .auth-input { width: 100%; padding: 12px 16px 12px 44px; border: 1.5px solid rgb(226,232,240); border-radius: 12px; font-size: 14px; color: rgb(15,23,42); background: rgb(248,250,252); transition: all 0.2s; outline: none; }
+        .auth-input:focus { border-color: rgb(2,132,199); background: white; box-shadow: 0 0 0 3px rgba(2,132,199,0.1); }
+        .auth-input::placeholder { color: rgb(148,163,184); }
+        .input-icon-abs { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: rgb(148,163,184); pointer-events: none; }
+        .input-wrap { position: relative; }
+        .toggle-pw { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; color: rgb(148,163,184); cursor: pointer; padding: 0; }
+        .toggle-pw:hover { color: rgb(71,85,105); }
+        .auth-btn { width: 100%; padding: 14px; border: none; border-radius: 14px; background: rgb(2,132,199); color: white; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .auth-btn:hover { background: rgb(3,105,161); box-shadow: 0 8px 24px rgba(2,132,199,0.3); transform: translateY(-1px); }
+        .auth-btn:active { transform: translateY(0); }
+        .auth-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .auth-link { color: rgb(2,132,199); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+        .auth-link:hover { color: rgb(3,105,161); }
+    </style>
+</head>
+<body style="margin:0; background:white;">
+
+<div class="auth-layout">
+    <!-- ── Left Brand Panel ── -->
+    <div class="auth-brand">
+        <div class="brand-glow" style="top:-100px; left:-100px; background:rgba(2,132,199,0.15);"></div>
+        <div class="brand-glow" style="bottom:-50px; right:-50px; background:rgba(99,102,241,0.1);"></div>
+
+        <div style="position:relative; z-index:1; text-align:center; padding:40px; max-width:480px;">
+            <!-- Logo -->
+            <div class="float-anim" style="width:72px;height:72px;background:rgba(2,132,199,0.15);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 32px;">
+                <svg style="width:36px;height:36px;color:rgb(56,189,248);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                </svg>
+            </div>
+            <h2 style="font-size:2rem;font-weight:800;color:white;margin:0 0 12px;letter-spacing:-0.02em;">KnowVault<span style="color:rgb(56,189,248);">.ai</span></h2>
+            <p style="color:rgb(148,163,184);font-size:1.05rem;line-height:1.7;margin:0 0 40px;">Transform your knowledge management with AI-powered document search and insights.</p>
+
+            <!-- Testimonial card -->
+            <div class="glass-card" style="text-align:left;">
+                <p style="color:rgba(255,255,255,0.8);font-size:0.95rem;line-height:1.7;margin:0 0 16px;font-style:italic;">"KnowVault cut our document search time by 90%. What used to take hours now takes seconds."</p>
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,rgb(2,132,199),rgb(99,102,241));display:flex;align-items:center;justify-content:center;">
+                        <span style="color:white;font-weight:700;font-size:14px;">SK</span>
+                    </div>
+                    <div>
+                        <div style="color:white;font-weight:600;font-size:14px;">Sarah Kim</div>
+                        <div style="color:rgb(148,163,184);font-size:12px;">VP of Operations, TechCorp</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Right Form Panel ── -->
+    <div class="auth-form-side">
+        <div style="width:100%;max-width:420px;">
+            <!-- Mobile logo -->
+            <div class="fade-up" style="text-align:center;margin-bottom:8px;">
+                <div style="display:inline-flex;align-items:center;gap:10px;margin-bottom:32px;">
+                    <div style="width:36px;height:36px;background:rgb(2,132,199);border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                        <svg style="width:20px;height:20px;color:white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                    </div>
+                    <span style="font-size:18px;font-weight:700;color:rgb(15,23,42);">KnowVault<span style="color:rgb(2,132,199);">.ai</span></span>
+                </div>
+            </div>
+
+            <div class="fade-up fd1" style="margin-bottom:32px;">
+                <h1 style="font-size:1.75rem;font-weight:800;color:rgb(15,23,42);margin:0 0 8px;letter-spacing:-0.02em;">Welcome back</h1>
+                <p style="color:rgb(100,116,139);font-size:0.95rem;margin:0;">Sign in to continue to your dashboard</p>
+            </div>
+
+            <form id="loginForm" style="display:flex;flex-direction:column;gap:20px;">
+                <div class="general-error hidden p-4 bg-error-50 border border-error-200 rounded-lg text-error-700 text-sm"></div>
+
+                <!-- Email -->
+                <div class="fade-up fd2">
+                    <label style="display:block;font-size:13px;font-weight:600;color:rgb(51,65,85);margin-bottom:6px;">Email Address</label>
+                    <div class="input-wrap">
+                        <div class="input-icon-abs"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg></div>
+                        <input type="email" id="email" name="email" class="auth-input" placeholder="you@company.com" autocomplete="email" required>
+                    </div>
+                    <div class="input-error hidden"><svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span></span></div>
+                </div>
+
+                <!-- Password -->
+                <div class="fade-up fd3">
+                    <label style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:rgb(51,65,85);margin-bottom:6px;">
+                        <span>Password</span>
+                        <a href="/auth/forgot-password/" class="auth-link" style="font-size:13px;font-weight:500;">Forgot password?</a>
+                    </label>
+                    <div class="input-wrap">
+                        <div class="input-icon-abs"><svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg></div>
+                        <input type="password" id="password" name="password" class="auth-input" style="padding-right:44px;" placeholder="Enter your password" autocomplete="current-password" required>
+                        <button type="button" class="toggle-pw" onclick="togglePasswordVisibility('password', this)">
+                            <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                        </button>
+                    </div>
+                    <div class="input-error hidden"><svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span></span></div>
+                </div>
+
+                <!-- Remember -->
+                <div class="fade-up fd3" style="display:flex;align-items:center;gap:8px;">
+                    <input type="checkbox" id="rememberMe" name="rememberMe" style="width:16px;height:16px;accent-color:rgb(2,132,199);border-radius:4px;">
+                    <label for="rememberMe" style="font-size:13px;color:rgb(71,85,105);cursor:pointer;">Remember me for 30 days</label>
+                </div>
+
+                <!-- Submit -->
+                <div class="fade-up fd4">
+                    <button type="submit" class="auth-btn" data-original-text="Sign In">
+                        <span class="spinner hidden"><svg class="w-4 h-4" style="animation:spin 1s linear infinite;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></span>
+                        <span class="button-text">Sign In</span>
+                        <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Footer -->
+            <div class="fade-up fd4" style="text-align:center;margin-top:32px;">
+                <p style="font-size:14px;color:rgb(100,116,139);margin:0;">
+                    Don't have an account? <a href="/auth/register/" class="auth-link">Create one free</a>
+                </p>
+            </div>
+
+            <div style="text-align:center;margin-top:40px;">
+                <p style="font-size:12px;color:rgb(148,163,184);margin:0;">&copy; 2025 KnowVault AI. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+<script src="{% static 'js/api.js' %}"></script>
+<script src="{% static 'js/validation.js' %}"></script>
+<script src="{% static 'js/animations.js' %}"></script>
+<script>
+    const loginValidationSchema = {
+        email: [
+            ValidationRules.required('Email is required'),
+            ValidationRules.email('Please enter a valid email address')
+        ],
+        password: [
+            ValidationRules.required('Password is required'),
+            ValidationRules.minLength(8, 'Password must be at least 8 characters')
+        ]
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('loginForm');
+        const formHandler = new FormHandler(form, loginValidationSchema);
+
+        formHandler.onSubmit = async function(values) {
+            try {
+                const data = await api.login(values.email, values.password);
+                showToast('Login successful! Redirecting...', 'success');
+                if (data.mfa_required) {
+                    window.location.href = '/auth/mfa-setup/';
+                } else {
+                    window.location.href = '/dashboard/';
+                }
+            } catch (error) {
+                const msg = error.data?.detail || 'Invalid email or password. Please try again.';
+                this.showGeneralError(msg);
+            }
+        };
+    });
+</script>
+</body>
+</html>

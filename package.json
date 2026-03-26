@@ -1,0 +1,35 @@
+{
+  "name": "knowvault-frontend-tailwind",
+  "version": "1.0.0",
+  "description": "KnowVault AI Frontend - Pure Tailwind CSS Implementation",
+  "main": "index.html",
+  "scripts": {
+    "dev": "live-server --port=3000 --host=localhost --open=/pages/auth/login.html",
+    "build": "tailwindcss -i ./src/styles/input.css -o ./dist/styles.css --minify",
+    "watch": "tailwindcss -i ./src/styles/input.css -o ./src/styles/output.css --watch",
+    "serve": "live-server --port=3000 --host=localhost",
+    "build-css": "tailwindcss build -i ./src/styles/input.css -o ./src/styles/output.css"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "live-server": "^1.2.2",
+    "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/typography": "^0.5.10"
+  },
+  "dependencies": {
+    "alpinejs": "^3.13.3"
+  },
+  "keywords": [
+    "tailwindcss",
+    "html",
+    "css",
+    "javascript",
+    "authentication",
+    "knowvault",
+    "ai"
+  ],
+  "author": "KnowVault AI Team",
+  "license": "MIT"
+}

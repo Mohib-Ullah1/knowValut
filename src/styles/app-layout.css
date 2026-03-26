@@ -1,0 +1,196 @@
+/* ══════════════════════════════════════════════
+   KnowVault App Layout — Premium Design System
+   Include this in all authenticated app pages
+   ══════════════════════════════════════════════ */
+
+* { font-family: Inter, system-ui, sans-serif; box-sizing: border-box; }
+body { margin: 0; background: rgb(248,250,252); }
+
+/* ── Sidebar ── */
+aside, .sidebar-old {
+    background: linear-gradient(180deg, rgb(15,23,42) 0%, rgb(30,41,59) 100%) !important;
+    border-right: none !important;
+}
+aside h1, aside .text-xl { color: white !important; }
+aside .border-b, aside .border-t { border-color: rgba(255,255,255,0.08) !important; }
+aside nav a, aside a.flex {
+    color: rgba(255,255,255,0.55) !important;
+    transition: all 0.2s !important;
+    border-radius: 10px !important;
+}
+aside nav a:hover, aside a.flex:hover {
+    color: white !important;
+    background: rgba(255,255,255,0.06) !important;
+}
+aside nav a svg, aside a.flex svg { color: rgba(255,255,255,0.4) !important; }
+aside nav a:hover svg, aside a.flex:hover svg { color: rgba(255,255,255,0.8) !important; }
+
+/* Active nav link */
+aside .bg-primary-100,
+aside a[class*="bg-primary"] {
+    background: rgba(2,132,199,0.15) !important;
+    color: rgb(56,189,248) !important;
+}
+aside .bg-primary-100 span,
+aside a[class*="bg-primary"] span,
+aside .text-primary-700 { color: rgb(56,189,248) !important; }
+aside .bg-primary-100 svg,
+aside a[class*="bg-primary"] svg { color: rgb(56,189,248) !important; }
+
+/* User profile area */
+aside #sidebarUserName, aside .truncate:first-of-type { color: white !important; }
+aside #sidebarUserEmail, aside .text-xs.text-secondary-500 { color: rgba(255,255,255,0.45) !important; }
+aside .bg-primary-600, aside .w-8.h-8.bg-primary-600 { background: rgba(2,132,199,0.25) !important; }
+aside button[onclick="handleLogout()"] { color: rgba(255,255,255,0.35) !important; }
+aside button[onclick="handleLogout()"]:hover { color: rgb(248,113,113) !important; background: rgba(248,113,113,0.1) !important; }
+
+/* ── Mobile Header ── */
+header {
+    background: rgb(15,23,42) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+}
+header h1, header .text-lg, header .text-secondary-900 { color: white !important; }
+header button, header .text-secondary-600 { color: rgba(255,255,255,0.7) !important; }
+header .bg-primary-600 { background: rgba(2,132,199,0.25) !important; }
+
+/* ── Mobile Sidebar Overlay ── */
+#mobileSidebarContent {
+    background: linear-gradient(180deg, rgb(15,23,42) 0%, rgb(30,41,59) 100%) !important;
+}
+#mobileSidebarContent a { color: rgba(255,255,255,0.55) !important; transition: all 0.2s; }
+#mobileSidebarContent a:hover { color: white !important; background: rgba(255,255,255,0.06) !important; }
+#mobileSidebarContent .bg-primary-100, #mobileSidebarContent a[class*="bg-primary"] {
+    background: rgba(2,132,199,0.15) !important;
+    color: rgb(56,189,248) !important;
+}
+#mobileSidebarContent .bg-primary-100 svg, #mobileSidebarContent a[class*="bg-primary"] svg { color: rgb(56,189,248) !important; }
+#mobileSidebarContent .border-b, #mobileSidebarContent .border-t { border-color: rgba(255,255,255,0.08) !important; }
+#mobileSidebarContent h1, #mobileSidebarContent .text-lg { color: white !important; }
+#mobileSidebarContent .text-secondary-900, #mobileSidebarContent #sidebarUserName { color: white !important; }
+#mobileSidebarContent .text-secondary-500, #mobileSidebarContent .text-xs { color: rgba(255,255,255,0.45) !important; }
+#mobileSidebarContent .bg-primary-600 { background: rgba(2,132,199,0.25) !important; }
+#mobileSidebarContent button[onclick="handleLogout()"] { color: rgba(255,255,255,0.35) !important; }
+
+/* ── Content Area ── */
+main { background: rgb(248,250,252) !important; }
+
+/* ── Cards ── */
+.card, [class*="card-default"], [class*="card-elevated"] {
+    border-radius: 16px !important;
+    border: 1px solid rgb(226,232,240) !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
+    background: white !important;
+}
+
+/* ── Buttons ── */
+.btn-primary {
+    border-radius: 12px !important;
+    box-shadow: 0 4px 12px rgba(2,132,199,0.2) !important;
+}
+.btn-outline {
+    border-radius: 12px !important;
+}
+
+/* ── Inputs in content area ── */
+main input[type="text"],
+main input[type="email"],
+main input[type="password"],
+main input[type="search"],
+main textarea,
+main select {
+    border-radius: 12px !important;
+    border: 1.5px solid rgb(226,232,240) !important;
+    background: rgb(248,250,252) !important;
+    transition: all 0.2s !important;
+}
+main input:focus, main textarea:focus, main select:focus {
+    border-color: rgb(2,132,199) !important;
+    background: white !important;
+    box-shadow: 0 0 0 3px rgba(2,132,199,0.1) !important;
+    outline: none !important;
+}
+
+/* ── Section headers ── */
+main h1 { letter-spacing: -0.02em; }
+main h2 { letter-spacing: -0.01em; }
+
+/* ── Grid fixes — force proper columns ── */
+.grid.grid-cols-2 { grid-template-columns: repeat(2, 1fr) !important; }
+.grid.grid-cols-3 { grid-template-columns: repeat(3, 1fr) !important; }
+.grid.grid-cols-4 { grid-template-columns: repeat(4, 1fr) !important; }
+.grid.grid-cols-1 { grid-template-columns: 1fr !important; }
+.gap-4 { gap: 16px !important; }
+.gap-6 { gap: 24px !important; }
+.gap-8 { gap: 32px !important; }
+
+@media (min-width: 768px) {
+    .md\:grid-cols-2 { grid-template-columns: repeat(2, 1fr) !important; }
+    .md\:grid-cols-3 { grid-template-columns: repeat(3, 1fr) !important; }
+}
+@media (min-width: 1024px) {
+    .lg\:grid-cols-2 { grid-template-columns: repeat(2, 1fr) !important; }
+    .lg\:grid-cols-3 { grid-template-columns: repeat(3, 1fr) !important; }
+    .lg\:grid-cols-4 { grid-template-columns: repeat(4, 1fr) !important; }
+    .lg\:col-span-1 { grid-column: span 1 !important; }
+    .lg\:col-span-2 { grid-column: span 2 !important; }
+    .lg\:col-span-3 { grid-column: span 3 !important; }
+}
+
+/* Fix flex layouts */
+.flex.items-center.justify-between { display: flex !important; align-items: center !important; justify-content: space-between !important; }
+.flex.items-center.space-x-3 > * + * { margin-left: 12px; }
+.flex.items-center.space-x-6 > * + * { margin-left: 24px; }
+.space-y-2 > * + * { margin-top: 8px; }
+.space-y-3 > * + * { margin-top: 12px; }
+.space-y-4 > * + * { margin-top: 16px; }
+.space-y-6 > * + * { margin-top: 24px; }
+
+/* ── Progress bars ── */
+.bg-secondary-200.rounded-full {
+    background: rgb(241,245,249) !important;
+    border-radius: 8px !important;
+}
+.bg-primary-600.rounded-full {
+    background: linear-gradient(90deg, rgb(2,132,199), rgb(99,102,241)) !important;
+    border-radius: 8px !important;
+}
+
+/* ── Settings nav ── */
+.settings-nav-item {
+    border-radius: 10px !important;
+    transition: all 0.2s !important;
+}
+.settings-nav-item.active,
+.settings-nav-item.bg-primary-100 {
+    background: rgba(2,132,199,0.08) !important;
+    color: rgb(2,132,199) !important;
+}
+
+/* ── Chat UI ── */
+#chatMessages {
+    background: rgb(248,250,252) !important;
+    border-radius: 16px !important;
+}
+
+/* ── Hover cards ── */
+.card:hover, [data-hover="true"]:hover {
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06) !important;
+    transform: translateY(-2px);
+    transition: all 0.25s ease !important;
+}
+
+/* ── Modals ── */
+[class*="modal"] .card,
+[class*="Modal"] > div > div {
+    border-radius: 20px !important;
+}
+
+/* ── Tables ── */
+table { border-radius: 12px; overflow: hidden; }
+th { background: rgb(248,250,252) !important; font-weight: 600 !important; font-size: 13px !important; }
+
+/* ── Tags/Badges ── */
+.rounded-full[class*="bg-"] {
+    font-weight: 600 !important;
+    font-size: 12px !important;
+}

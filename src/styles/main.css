@@ -1,0 +1,55 @@
+/* KnowVault AI - Main Stylesheet */
+/* Import order: Variables -> Base -> Pages */
+
+@import './variables.css';
+@import './base.css';
+
+/* Page-specific styles */
+@import './pages/login.css';
+@import './pages/register.css';
+@import './pages/dashboard.css';
+@import './pages/documents.css';
+@import './pages/chat.css';
+@import './pages/settings.css';
+
+/* Additional utility classes */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.gap-1 { gap: var(--spacing-xs); }
+.gap-2 { gap: var(--spacing-sm); }
+.gap-3 { gap: var(--spacing-md); }
+.gap-4 { gap: var(--spacing-lg); }
+
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+
+.rounded { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-full { border-radius: 9999px; }
+
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+
+.transition { transition: all 0.2s ease; }
+
+.cursor-pointer { cursor: pointer; }
+
+.overflow-hidden { overflow: hidden; }
+.overflow-auto { overflow: auto; }
+
+/* Responsive utilities */
+@media (max-width: 640px) {
+  .sm\:hidden { display: none; }
+}
+
+@media (max-width: 768px) {
+  .md\:hidden { display: none; }
+}
+
+@media (max-width: 1024px) {
+  .lg\:hidden { display: none; }
+}

@@ -1,0 +1,459 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat - KnowVault AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="{% static 'styles/output.css' %}" rel="stylesheet">
+    <style>
+        * { font-family: Inter, system-ui, sans-serif; box-sizing: border-box; }
+
+        /* ── Sidebar ── */
+        .sidebar { position:fixed; left:0; top:0; bottom:0; width:260px; background:linear-gradient(180deg,rgb(15,23,42) 0%,rgb(30,41,59) 100%); z-index:40; display:flex; flex-direction:column; }
+        .sidebar .logo { padding:24px 20px; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; gap:12px; }
+        .sidebar .logo-icon { width:36px;height:36px;background:rgba(2,132,199,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center; }
+        .sidebar .logo-text { font-size:16px; font-weight:700; color:white; }
+        .sidebar .logo-text span { color:rgb(56,189,248); }
+        .sidebar nav { flex:1; padding:16px 12px; display:flex; flex-direction:column; gap:4px; overflow-y:auto; }
+        .nav-link { display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:10px; font-size:13px; font-weight:500; color:rgba(255,255,255,0.55); text-decoration:none; transition:all 0.2s; }
+        .nav-link:hover { color:white; background:rgba(255,255,255,0.06); }
+        .nav-link.active { background:rgba(2,132,199,0.15); color:rgb(56,189,248); }
+        .nav-link svg { width:20px; height:20px; flex-shrink:0; }
+        .nav-link.active svg { color:rgb(56,189,248); }
+        .sidebar-section { font-size:11px; font-weight:600; color:rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:0.08em; padding:20px 14px 8px; }
+        .sidebar-footer { padding:16px; border-top:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; gap:10px; }
+        .sidebar-footer .avatar { width:34px;height:34px;border-radius:50%;background:rgba(2,132,199,0.25);display:flex;align-items:center;justify-content:center; }
+        .sidebar-footer .avatar svg { width:16px;height:16px;color:rgb(56,189,248); }
+        .sidebar-footer .info { flex:1; min-width:0; }
+        .sidebar-footer .name { font-size:13px;font-weight:600;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+        .sidebar-footer .email { font-size:11px;color:rgba(255,255,255,0.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+        .logout-btn { padding:6px;border-radius:8px;background:none;border:none;color:rgba(255,255,255,0.35);cursor:pointer;transition:all 0.2s; }
+        .logout-btn:hover { color:rgb(248,113,113); background:rgba(248,113,113,0.1); }
+
+        /* ── Mobile header ── */
+        .mobile-header { display:none; position:fixed;top:0;left:0;right:0;height:60px;background:rgb(15,23,42);z-index:40;padding:0 16px;align-items:center;justify-content:space-between; }
+        .mobile-header h1 { color:white;font-size:16px;font-weight:700; }
+        .mobile-header button { background:none;border:none;color:rgba(255,255,255,0.7);cursor:pointer;padding:8px; }
+        .mobile-header .avatar { width:36px;height:36px;border-radius:50%;background:rgba(2,132,199,0.25);display:flex;align-items:center;justify-content:center; }
+
+        /* ── Content ── */
+        .content { margin-left:260px; min-height:100vh; background:rgb(248,250,252); display:flex; flex-direction:column; }
+        .content-inner { padding:0; flex:1; display:flex; flex-direction:column; }
+
+        /* ── Mobile ── */
+        @media(max-width:1024px) {
+            .sidebar { display:none; }
+            .mobile-header { display:flex; }
+            .content { margin-left:0; padding-top:60px; }
+            .content-inner { padding:0; }
+        }
+
+        /* ── Mobile sidebar overlay ── */
+        .mob-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:45; }
+        .mob-overlay.open { display:block; }
+        .mob-sidebar { position:fixed;left:0;top:0;bottom:0;width:260px;background:linear-gradient(180deg,rgb(15,23,42),rgb(30,41,59));z-index:50;transform:translateX(-100%);transition:transform 0.3s ease; }
+        .mob-overlay.open .mob-sidebar { transform:translateX(0); }
+    </style>
+</head>
+<body style="margin:0;background:rgb(248,250,252);">
+
+    <!-- ════ DESKTOP SIDEBAR ════ -->
+    <div class="sidebar" id="desktopSidebar">
+        <div class="logo">
+            <div class="logo-icon">
+                <svg style="width:20px;height:20px;color:rgb(56,189,248);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+            </div>
+            <div class="logo-text">KnowVault<span>.ai</span></div>
+        </div>
+
+        <nav>
+            <div class="sidebar-section">Main</div>
+            <a href="/dashboard/" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                Dashboard
+            </a>
+            <a href="/query/chat/" class="nav-link active">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                AI Chat
+            </a>
+            <a href="/documents/" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                Documents
+            </a>
+
+            <div class="sidebar-section">Analytics</div>
+            <a href="/dashboard/analytics/" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                Analytics
+            </a>
+            <a href="/dashboard/reports/" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                Reports
+            </a>
+
+            <div class="sidebar-section">Account</div>
+            <a href="/settings/" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                Settings
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="avatar"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></div>
+            <div class="info">
+                <div id="sidebarUserName" class="name">Loading...</div>
+                <div id="sidebarUserEmail" class="email"></div>
+            </div>
+            <button class="logout-btn" onclick="handleLogout()" title="Sign out">
+                <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- ════ MOBILE HEADER ════ -->
+    <div class="mobile-header">
+        <button id="mobileMenuBtn"><svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+        <h1>AI Chat</h1>
+        <div class="avatar"><svg style="width:18px;height:18px;color:rgb(56,189,248);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></div>
+    </div>
+
+    <!-- Mobile sidebar overlay -->
+    <div id="mobileSidebar" class="mob-overlay">
+        <div class="mob-sidebar" id="mobileSidebarContent">
+            <div style="padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;">
+                <div style="font-size:16px;font-weight:700;color:white;">KnowVault<span style="color:rgb(56,189,248);">.ai</span></div>
+                <button id="closeMobileMenu" style="background:none;border:none;color:rgba(255,255,255,0.6);cursor:pointer;padding:4px;"><svg style="width:20px;height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            </div>
+            <nav style="padding:12px;display:flex;flex-direction:column;gap:4px;">
+                <a href="/dashboard/" class="nav-link"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg> Dashboard</a>
+                <a href="/query/chat/" class="nav-link active"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg> AI Chat</a>
+                <a href="/documents/" class="nav-link"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg> Documents</a>
+                <a href="/dashboard/analytics/" class="nav-link"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg> Analytics</a>
+                <a href="/dashboard/reports/" class="nav-link"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg> Reports</a>
+                <a href="/settings/" class="nav-link"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg> Settings</a>
+            </nav>
+        </div>
+    </div>
+
+    <!-- ════ MAIN CONTENT ════ -->
+    <div class="content">
+        <div class="content-inner">
+            <!-- Chat Header -->
+            <div class="bg-white border-b border-secondary-200 p-4 lg:p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-2xl font-bold text-secondary-900">AI Assistant</h1>
+                        <p class="text-sm text-secondary-600">Ask questions about your documents and knowledge base</p>
+                    </div>
+                    <button id="newChatBtn" class="btn btn-outline btn-md">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        New Chat
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat Messages -->
+            <div class="flex-1 overflow-y-auto p-4 lg:p-6" id="chatMessages">
+                <!-- Welcome Message -->
+                <div class="max-w-4xl mx-auto">
+                    <div class="text-center mb-8" data-animate="fade-in-up">
+                        <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-semibold text-secondary-900 mb-2">Welcome to KnowVault AI</h2>
+                        <p class="text-secondary-600 mb-6">I'm here to help you find information from your documents and knowledge base. Ask me anything!</p>
+
+                        <!-- Suggested Questions -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+                            <button class="suggestion-card p-4 text-left bg-white border border-secondary-200 rounded-lg hover:border-primary-300 hover:bg-primary-50 transition-all duration-200">
+                                <div class="flex items-start space-x-3">
+                                    <svg class="w-5 h-5 text-primary-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                    <div>
+                                        <p class="font-medium text-secondary-900">What's in the company handbook?</p>
+                                        <p class="text-sm text-secondary-600">Learn about policies and procedures</p>
+                                    </div>
+                                </div>
+                            </button>
+
+                            <button class="suggestion-card p-4 text-left bg-white border border-secondary-200 rounded-lg hover:border-primary-300 hover:bg-primary-50 transition-all duration-200">
+                                <div class="flex items-start space-x-3">
+                                    <svg class="w-5 h-5 text-success-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                    </svg>
+                                    <div>
+                                        <p class="font-medium text-secondary-900">Show me the Q1 financial results</p>
+                                        <p class="text-sm text-secondary-600">Get insights from financial reports</p>
+                                    </div>
+                                </div>
+                            </button>
+
+                            <button class="suggestion-card p-4 text-left bg-white border border-secondary-200 rounded-lg hover:border-primary-300 hover:bg-primary-50 transition-all duration-200">
+                                <div class="flex items-start space-x-3">
+                                    <svg class="w-5 h-5 text-warning-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                    </svg>
+                                    <div>
+                                        <p class="font-medium text-secondary-900">How do I set up the API?</p>
+                                        <p class="text-sm text-secondary-600">Find technical documentation</p>
+                                    </div>
+                                </div>
+                            </button>
+
+                            <button class="suggestion-card p-4 text-left bg-white border border-secondary-200 rounded-lg hover:border-primary-300 hover:bg-primary-50 transition-all duration-200">
+                                <div class="flex items-start space-x-3">
+                                    <svg class="w-5 h-5 text-error-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                    </svg>
+                                    <div>
+                                        <p class="font-medium text-secondary-900">What's our marketing strategy?</p>
+                                        <p class="text-sm text-secondary-600">Review marketing plans and campaigns</p>
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input -->
+            <div class="bg-white border-t border-secondary-200 p-4 lg:p-6">
+                <div class="max-w-4xl mx-auto">
+                    <form id="chatForm" class="flex space-x-4">
+                        <div class="flex-1 relative">
+                            <textarea
+                                id="messageInput"
+                                placeholder="Ask a question about your documents..."
+                                class="input-field input-md w-full border border-secondary-300 rounded-lg resize-none pr-12"
+                                rows="1"
+                                style="min-height: 44px; max-height: 120px;"
+                            ></textarea>
+                            <button
+                                type="button"
+                                id="attachBtn"
+                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-secondary-400 hover:text-secondary-600 transition-colors duration-200"
+                            >
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <button
+                            type="submit"
+                            id="sendBtn"
+                            class="btn btn-primary btn-md px-6"
+                            disabled
+                        >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                            </svg>
+                        </button>
+                    </form>
+
+                    <div class="flex items-center justify-between mt-3 text-xs text-secondary-500">
+                        <span>Press Enter to send, Shift+Enter for new line</span>
+                        <span id="charCount">0/2000</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{% static 'js/api.js' %}"></script>
+    <script src="{% static 'js/animations.js' %}"></script>
+    <script>
+        // Auth guard — redirect to login if not authenticated
+        if (!api.isAuthenticated()) {
+            window.location.href = '/auth/login/';
+        }
+
+        // Load user data into sidebar
+        const _user = api.getUser();
+        if (_user) {
+            const nameEl = document.getElementById('sidebarUserName');
+            const emailEl = document.getElementById('sidebarUserEmail');
+            if (nameEl) nameEl.textContent = (_user.first_name && _user.last_name) ? `${_user.first_name} ${_user.last_name}` : _user.username;
+            if (emailEl) emailEl.textContent = _user.email || '';
+        }
+
+        // Global logout handler
+        async function handleLogout() {
+            await api.logout();
+            window.location.href = '/auth/login/';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileSidebar = document.getElementById('mobileSidebar');
+            const closeMobileMenu = document.getElementById('closeMobileMenu');
+
+            mobileMenuBtn?.addEventListener('click', () => mobileSidebar.classList.add('open'));
+            closeMobileMenu?.addEventListener('click', () => mobileSidebar.classList.remove('open'));
+            mobileSidebar?.addEventListener('click', (e) => { if (e.target === mobileSidebar) mobileSidebar.classList.remove('open'); });
+
+            const chatForm = document.getElementById('chatForm');
+            const messageInput = document.getElementById('messageInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const charCount = document.getElementById('charCount');
+            const chatMessages = document.getElementById('chatMessages');
+            const newChatBtn = document.getElementById('newChatBtn');
+            const suggestionCards = document.querySelectorAll('.suggestion-card');
+
+            messageInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+                const count = this.value.length;
+                charCount.textContent = `${count}/2000`;
+                sendBtn.disabled = count === 0 || count > 2000;
+                if (count > 2000) {
+                    charCount.classList.add('text-error-600');
+                } else {
+                    charCount.classList.remove('text-error-600');
+                }
+            });
+
+            chatForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const message = messageInput.value.trim();
+                if (message && message.length <= 2000) {
+                    sendMessage(message);
+                    messageInput.value = '';
+                    messageInput.style.height = 'auto';
+                    charCount.textContent = '0/2000';
+                    sendBtn.disabled = true;
+                }
+            });
+
+            messageInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    chatForm.dispatchEvent(new Event('submit'));
+                }
+            });
+
+            suggestionCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const question = this.querySelector('p').textContent;
+                    sendMessage(question);
+                });
+            });
+
+            newChatBtn.addEventListener('click', function() {
+                const welcomeContent = chatMessages.innerHTML;
+                chatMessages.innerHTML = welcomeContent;
+            });
+
+            async function sendMessage(message) {
+                const welcomeScreen = chatMessages.querySelector('.text-center');
+                if (welcomeScreen) {
+                    welcomeScreen.style.display = 'none';
+                }
+
+                addMessage(message, 'user');
+                showTypingIndicator();
+
+                try {
+                    const data = await api.post('/queries/', { query_text: message });
+                    hideTypingIndicator();
+                    addMessage(data.response_text, 'ai');
+                } catch (error) {
+                    hideTypingIndicator();
+                    addMessage('Sorry, something went wrong. Please try again.', 'ai');
+                }
+            }
+
+            function addMessage(content, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'} mb-4`;
+
+                const messageContent = `
+                    <div class="max-w-3xl ${sender === 'user' ? 'order-2' : 'order-1'}">
+                        <div class="flex items-start space-x-3">
+                            ${sender === 'ai' ? `
+                                <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                                    </svg>
+                                </div>
+                            ` : ''}
+                            <div class="flex-1">
+                                <div class="p-4 rounded-lg ${sender === 'user' ? 'bg-primary-600 text-white' : 'bg-white border border-secondary-200'}">
+                                    <p class="text-sm">${content}</p>
+                                </div>
+                                <div class="mt-1 text-xs text-secondary-500 ${sender === 'user' ? 'text-right' : 'text-left'}">
+                                    ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                                </div>
+                            </div>
+                            ${sender === 'user' ? `
+                                <div class="w-8 h-8 bg-secondary-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                    </svg>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+
+                messageDiv.innerHTML = messageContent;
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                if (window.animationController) {
+                    window.animationController.triggerAnimation(messageDiv, 'fade-in-up');
+                }
+            }
+
+            function showTypingIndicator() {
+                const typingDiv = document.createElement('div');
+                typingDiv.id = 'typingIndicator';
+                typingDiv.className = 'flex justify-start mb-4';
+                typingDiv.innerHTML = `
+                    <div class="max-w-3xl">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <div class="p-4 rounded-lg bg-white border border-secondary-200">
+                                    <div class="flex items-center space-x-1">
+                                        <span class="text-sm text-secondary-500">AI is typing</span>
+                                        <div class="flex space-x-1">
+                                            <div class="w-2 h-2 bg-secondary-400 rounded-full animate-bounce" style="animation-delay: 0s;"></div>
+                                            <div class="w-2 h-2 bg-secondary-400 rounded-full animate-bounce" style="animation-delay: 0.2s;"></div>
+                                            <div class="w-2 h-2 bg-secondary-400 rounded-full animate-bounce" style="animation-delay: 0.4s;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                chatMessages.appendChild(typingDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function hideTypingIndicator() {
+                const typingIndicator = document.getElementById('typingIndicator');
+                if (typingIndicator) {
+                    typingIndicator.remove();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

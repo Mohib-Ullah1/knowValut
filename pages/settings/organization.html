@@ -1,0 +1,574 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organization Settings - KnowVault AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="{% static 'styles/output.css' %}" rel="stylesheet">
+    <style>
+        * { font-family: Inter, system-ui, sans-serif; box-sizing: border-box; }
+
+        /* ── Sidebar ── */
+        .sidebar { position:fixed; left:0; top:0; bottom:0; width:260px; background:linear-gradient(180deg,rgb(15,23,42) 0%,rgb(30,41,59) 100%); z-index:40; display:flex; flex-direction:column; }
+        .sidebar .logo { padding:24px 20px; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; gap:12px; }
+        .sidebar .logo-icon { width:36px;height:36px;background:rgba(2,132,199,0.2);border-radius:10px;display:flex;align-items:center;justify-content:center; }
+        .sidebar .logo-text { font-size:16px; font-weight:700; color:white; }
+        .sidebar .logo-text span { color:rgb(56,189,248); }
+        .sidebar nav { flex:1; padding:16px 12px; display:flex; flex-direction:column; gap:4px; overflow-y:auto; }
+        .nav-link { display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:10px; font-size:13px; font-weight:500; color:rgba(255,255,255,0.55); text-decoration:none; transition:all 0.2s; }
+        .nav-link:hover { color:white; background:rgba(255,255,255,0.06); }
+        .nav-link.active { background:rgba(2,132,199,0.15); color:rgb(56,189,248); }
+        .nav-link svg { width:20px; height:20px; flex-shrink:0; }
+        .nav-link.active svg { color:rgb(56,189,248); }
+        .sidebar-section { font-size:11px; font-weight:600; color:rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:0.08em; padding:20px 14px 8px; }
+        .sidebar-footer { padding:16px; border-top:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; gap:10px; }
+        .sidebar-footer .avatar { width:34px;height:34px;border-radius:50%;background:rgba(2,132,199,0.25);display:flex;align-items:center;justify-content:center; }
+        .sidebar-footer .avatar svg { width:16px;height:16px;color:rgb(56,189,248); }
+        .sidebar-footer .info { flex:1; min-width:0; }
+        .sidebar-footer .name { font-size:13px;font-weight:600;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+        .sidebar-footer .email { font-size:11px;color:rgba(255,255,255,0.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+        .logout-btn { padding:6px;border-radius:8px;background:none;border:none;color:rgba(255,255,255,0.35);cursor:pointer;transition:all 0.2s; }
+        .logout-btn:hover { color:rgb(248,113,113); background:rgba(248,113,113,0.1); }
+
+        /* ── Mobile header ── */
+        .mobile-header { display:none; position:fixed;top:0;left:0;right:0;height:60px;background:rgb(15,23,42);z-index:40;padding:0 16px;align-items:center;justify-content:space-between; }
+        .mobile-header h1 { color:white;font-size:16px;font-weight:700; }
+        .mobile-header button { background:none;border:none;color:rgba(255,255,255,0.7);cursor:pointer;padding:8px; }
+        .mobile-header .avatar { width:36px;height:36px;border-radius:50%;background:rgba(2,132,199,0.25);display:flex;align-items:center;justify-content:center; }
+
+        /* ── Content ── */
+        .content { margin-left:260px; min-height:100vh; background:rgb(248,250,252); }
+        .content-inner { padding:32px; max-width:1200px; }
+
+        /* ── Mobile ── */
+        @media(max-width:1024px) {
+            .sidebar { display:none; }
+            .mobile-header { display:flex; }
+            .content { margin-left:0; padding-top:60px; }
+            .content-inner { padding:20px 16px; }
+        }
+
+        /* ── Mobile sidebar overlay ── */
+        .mob-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:45; }
+        .mob-overlay.open { display:block; }
+        .mob-sidebar { position:fixed;left:0;top:0;bottom:0;width:260px;background:linear-gradient(180deg,rgb(15,23,42),rgb(30,41,59));z-index:50;transform:translateX(-100%);transition:transform 0.3s ease; }
+        .mob-overlay.open .mob-sidebar { transform:translateX(0); }
+    </style>
+</head>
+<body style="margin:0;background:rgb(248,250,252);">
+
+    <!-- ════ DESKTOP SIDEBAR ════ -->
+    <div class="sidebar" id="desktopSidebar">
+        <div class="logo">
+            <div class="logo-icon">
+                <svg style="width:20px;height:20px;color:rgb(56,189,248);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+            </div>
+            <div class="logo-text">KnowVault<span>.ai</span></div>
+        </div>
+
+        <nav>
+            <div class="sidebar-section">Main</div>
+            <a href="/dashboard/" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                Dashboard
+            </a>
+            <a href="/query/chat/" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                AI Chat
+            </a>
+            <a href="/documents/" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                Documents
+            </a>
+
+            <div class="sidebar-section">Analytics</div>
+            <a href="/dashboard/analytics/" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                Analytics
+            </a>
+            <a href="/dashboard/reports/" class="nav-link">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                Reports
+            </a>
+
+            <div class="sidebar-section">Account</div>
+            <a href="/settings/" class="nav-link active">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                Settings
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="avatar"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></div>
+            <div class="info">
+                <div id="sidebarUserName" class="name">Loading...</div>
+                <div id="sidebarUserEmail" class="email"></div>
+            </div>
+            <button class="logout-btn" onclick="handleLogout()" title="Sign out">
+                <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- ════ MOBILE HEADER ════ -->
+    <div class="mobile-header">
+        <button id="mobileMenuBtn"><svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+        <h1>Organization</h1>
+        <div class="avatar"><svg style="width:18px;height:18px;color:rgb(56,189,248);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg></div>
+    </div>
+
+    <!-- Mobile sidebar overlay -->
+    <div id="mobileSidebar" class="mob-overlay">
+        <div class="mob-sidebar" id="mobileSidebarContent">
+            <div style="padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;">
+                <div style="font-size:16px;font-weight:700;color:white;">KnowVault<span style="color:rgb(56,189,248);">.ai</span></div>
+                <button id="closeMobileMenu" style="background:none;border:none;color:rgba(255,255,255,0.6);cursor:pointer;padding:4px;"><svg style="width:20px;height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            </div>
+            <nav style="padding:12px;display:flex;flex-direction:column;gap:4px;">
+                <a href="/dashboard/" class="nav-link"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg> Dashboard</a>
+                <a href="/query/chat/" class="nav-link"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg> AI Chat</a>
+                <a href="/documents/" class="nav-link"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg> Documents</a>
+                <a href="/dashboard/analytics/" class="nav-link"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg> Analytics</a>
+                <a href="/dashboard/reports/" class="nav-link"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg> Reports</a>
+                <a href="/settings/" class="nav-link active"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg> Settings</a>
+            </nav>
+        </div>
+    </div>
+
+    <!-- ════ MAIN CONTENT ════ -->
+    <div class="content">
+        <div class="content-inner">
+            <!-- Header -->
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:16px;">
+                <div>
+                    <h1 style="font-size:1.65rem;font-weight:800;color:rgb(15,23,42);margin:0 0 6px;letter-spacing:-0.02em;">Organization Settings</h1>
+                    <p style="font-size:14px;color:rgb(100,116,139);margin:0;">Manage organization-wide configuration and preferences.</p>
+                </div>
+            </div>
+
+            <!-- Settings Sections -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Settings Navigation -->
+                <div class="lg:col-span-1" data-animate="fade-in-up" data-delay="100">
+                    <div class="card card-default card-padding-md">
+                        <h2 class="text-lg font-semibold text-secondary-900 mb-4">Settings</h2>
+                        <nav class="space-y-2">
+                            <button class="settings-nav-item active w-full text-left px-3 py-2 rounded-lg text-sm font-medium bg-primary-100 text-primary-700" data-section="company">
+                                <svg class="w-4 h-4 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                                Company Info
+                            </button>
+                            <button class="settings-nav-item w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-secondary-600 hover:text-secondary-900 hover:bg-secondary-100 transition-colors duration-200" data-section="users">
+                                <svg class="w-4 h-4 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                                User Management
+                            </button>
+                            <button class="settings-nav-item w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-secondary-600 hover:text-secondary-900 hover:bg-secondary-100 transition-colors duration-200" data-section="billing">
+                                <svg class="w-4 h-4 mr-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                                Billing
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- Settings Content -->
+                <div class="lg:col-span-2" data-animate="fade-in-up" data-delay="200">
+                    <!-- Profile Section -->
+                    <div id="profile-section" class="settings-section">
+                        <div class="card card-default card-padding-md">
+                            <h2 class="text-xl font-semibold text-secondary-900 mb-6">Profile Information</h2>
+
+                            <form class="space-y-6">
+                                <!-- Profile Picture -->
+                                <div class="flex items-center space-x-6">
+                                    <div class="w-20 h-20 bg-primary-600 rounded-full flex items-center justify-center">
+                                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <button type="button" class="btn btn-outline btn-sm">Change Photo</button>
+                                        <p class="text-xs text-secondary-500 mt-1">JPG, PNG up to 2MB</p>
+                                    </div>
+                                </div>
+
+                                <!-- Name Fields -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="input-group">
+                                        <label class="input-label">First Name</label>
+                                        <input type="text" name="first_name" class="input-field input-md w-full border border-secondary-300 rounded-lg">
+                                    </div>
+                                    <div class="input-group">
+                                        <label class="input-label">Last Name</label>
+                                        <input type="text" name="last_name" class="input-field input-md w-full border border-secondary-300 rounded-lg">
+                                    </div>
+                                </div>
+
+                                <!-- Email -->
+                                <div class="input-group">
+                                    <label class="input-label">Email Address</label>
+                                    <input type="email" name="email" class="input-field input-md w-full border border-secondary-300 rounded-lg" readonly>
+                                </div>
+
+                                <!-- Job Title -->
+                                <div class="input-group">
+                                    <label class="input-label">Job Title</label>
+                                    <input type="text" value="Senior Developer" class="input-field input-md w-full border border-secondary-300 rounded-lg">
+                                </div>
+
+                                <!-- Department -->
+                                <div class="input-group">
+                                    <label class="input-label">Department</label>
+                                    <select class="input-field input-md w-full border border-secondary-300 rounded-lg">
+                                        <option>Engineering</option>
+                                        <option>Marketing</option>
+                                        <option>Sales</option>
+                                        <option>HR</option>
+                                        <option>Finance</option>
+                                    </select>
+                                </div>
+
+                                <!-- Bio -->
+                                <div class="input-group">
+                                    <label class="input-label">Bio</label>
+                                    <textarea rows="3" placeholder="Tell us about yourself..." class="input-field input-md w-full border border-secondary-300 rounded-lg"></textarea>
+                                </div>
+
+                                <!-- Save Button -->
+                                <div class="flex justify-end">
+                                    <button type="submit" class="btn btn-primary btn-md">Save Changes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- Security Section -->
+                    <div id="security-section" class="settings-section hidden">
+                        <div class="card card-default card-padding-md">
+                            <h2 class="text-xl font-semibold text-secondary-900 mb-6">Security Settings</h2>
+
+                            <div class="space-y-6">
+                                <!-- Change Password -->
+                                <div class="border-b border-secondary-200 pb-6">
+                                    <h3 class="text-lg font-medium text-secondary-900 mb-4">Change Password</h3>
+                                    <form class="space-y-4">
+                                        <div class="input-group">
+                                            <label class="input-label">Current Password</label>
+                                            <input type="password" class="input-field input-md w-full border border-secondary-300 rounded-lg">
+                                        </div>
+                                        <div class="input-group">
+                                            <label class="input-label">New Password</label>
+                                            <input type="password" class="input-field input-md w-full border border-secondary-300 rounded-lg">
+                                        </div>
+                                        <div class="input-group">
+                                            <label class="input-label">Confirm New Password</label>
+                                            <input type="password" class="input-field input-md w-full border border-secondary-300 rounded-lg">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-md">Update Password</button>
+                                    </form>
+                                </div>
+
+                                <!-- Two-Factor Authentication -->
+                                <div class="border-b border-secondary-200 pb-6">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <div>
+                                            <h3 class="text-lg font-medium text-secondary-900">Two-Factor Authentication</h3>
+                                            <p class="text-sm text-secondary-600">Add an extra layer of security to your account</p>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <input type="checkbox" id="mfa-toggle" class="w-4 h-4 text-primary-600 border-secondary-300 rounded focus:ring-primary-500">
+                                            <label for="mfa-toggle" class="ml-2 text-sm text-secondary-700">Enabled</label>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-outline btn-md">Configure MFA</button>
+                                </div>
+
+                                <!-- Active Sessions -->
+                                <div>
+                                    <h3 class="text-lg font-medium text-secondary-900 mb-4">Active Sessions</h3>
+                                    <div class="space-y-3">
+                                        <div class="flex items-center justify-between p-4 bg-secondary-50 rounded-lg">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-8 h-8 bg-success-100 rounded-full flex items-center justify-center">
+                                                    <svg class="w-4 h-4 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                                    </svg>
+                                                </div>
+                                                <div>
+                                                    <p class="font-medium text-secondary-900">Current Session</p>
+                                                    <p class="text-sm text-secondary-600">Chrome on Windows • New York, NY</p>
+                                                </div>
+                                            </div>
+                                            <span class="text-xs text-success-600 font-medium">Active</span>
+                                        </div>
+
+                                        <div class="flex items-center justify-between p-4 bg-white border border-secondary-200 rounded-lg">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-8 h-8 bg-secondary-100 rounded-full flex items-center justify-center">
+                                                    <svg class="w-4 h-4 text-secondary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                                    </svg>
+                                                </div>
+                                                <div>
+                                                    <p class="font-medium text-secondary-900">Mobile App</p>
+                                                    <p class="text-sm text-secondary-600">iPhone • Last active 2 hours ago</p>
+                                                </div>
+                                            </div>
+                                            <button class="text-sm text-error-600 hover:text-error-700 font-medium">Revoke</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notifications Section -->
+                    <div id="notifications-section" class="settings-section hidden">
+                        <div class="card card-default card-padding-md">
+                            <h2 class="text-xl font-semibold text-secondary-900 mb-6">Notification Preferences</h2>
+
+                            <div class="space-y-6">
+                                <!-- Email Notifications -->
+                                <div class="border-b border-secondary-200 pb-6">
+                                    <h3 class="text-lg font-medium text-secondary-900 mb-4">Email Notifications</h3>
+                                    <div class="space-y-4">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <p class="font-medium text-secondary-900">Document Processing</p>
+                                                <p class="text-sm text-secondary-600">Get notified when documents are processed</p>
+                                            </div>
+                                            <input type="checkbox" checked class="w-4 h-4 text-primary-600 border-secondary-300 rounded focus:ring-primary-500">
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <p class="font-medium text-secondary-900">Weekly Reports</p>
+                                                <p class="text-sm text-secondary-600">Receive weekly usage and analytics reports</p>
+                                            </div>
+                                            <input type="checkbox" checked class="w-4 h-4 text-primary-600 border-secondary-300 rounded focus:ring-primary-500">
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <p class="font-medium text-secondary-900">Security Alerts</p>
+                                                <p class="text-sm text-secondary-600">Important security and login notifications</p>
+                                            </div>
+                                            <input type="checkbox" checked class="w-4 h-4 text-primary-600 border-secondary-300 rounded focus:ring-primary-500">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Push Notifications -->
+                                <div>
+                                    <h3 class="text-lg font-medium text-secondary-900 mb-4">Push Notifications</h3>
+                                    <div class="space-y-4">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <p class="font-medium text-secondary-900">Chat Responses</p>
+                                                <p class="text-sm text-secondary-600">Get notified of AI responses in chat</p>
+                                            </div>
+                                            <input type="checkbox" class="w-4 h-4 text-primary-600 border-secondary-300 rounded focus:ring-primary-500">
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <p class="font-medium text-secondary-900">System Updates</p>
+                                                <p class="text-sm text-secondary-600">Notifications about system maintenance and updates</p>
+                                            </div>
+                                            <input type="checkbox" checked class="w-4 h-4 text-primary-600 border-secondary-300 rounded focus:ring-primary-500">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preferences Section -->
+                    <div id="preferences-section" class="settings-section hidden">
+                        <div class="card card-default card-padding-md">
+                            <h2 class="text-xl font-semibold text-secondary-900 mb-6">Preferences</h2>
+
+                            <div class="space-y-6">
+                                <!-- Theme -->
+                                <div class="border-b border-secondary-200 pb-6">
+                                    <h3 class="text-lg font-medium text-secondary-900 mb-4">Appearance</h3>
+                                    <div class="input-group">
+                                        <label class="input-label">Theme</label>
+                                        <select class="input-field input-md w-full border border-secondary-300 rounded-lg">
+                                            <option>Light</option>
+                                            <option>Dark</option>
+                                            <option>System</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Language -->
+                                <div class="border-b border-secondary-200 pb-6">
+                                    <h3 class="text-lg font-medium text-secondary-900 mb-4">Language & Region</h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="input-group">
+                                            <label class="input-label">Language</label>
+                                            <select class="input-field input-md w-full border border-secondary-300 rounded-lg">
+                                                <option>English (US)</option>
+                                                <option>English (UK)</option>
+                                                <option>Spanish</option>
+                                                <option>French</option>
+                                                <option>German</option>
+                                            </select>
+                                        </div>
+                                        <div class="input-group">
+                                            <label class="input-label">Timezone</label>
+                                            <select class="input-field input-md w-full border border-secondary-300 rounded-lg">
+                                                <option>Eastern Time (ET)</option>
+                                                <option>Central Time (CT)</option>
+                                                <option>Mountain Time (MT)</option>
+                                                <option>Pacific Time (PT)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- AI Preferences -->
+                                <div>
+                                    <h3 class="text-lg font-medium text-secondary-900 mb-4">AI Assistant</h3>
+                                    <div class="space-y-4">
+                                        <div class="input-group">
+                                            <label class="input-label">Response Style</label>
+                                            <select class="input-field input-md w-full border border-secondary-300 rounded-lg">
+                                                <option>Detailed</option>
+                                                <option>Concise</option>
+                                                <option>Technical</option>
+                                                <option>Conversational</option>
+                                            </select>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <p class="font-medium text-secondary-900">Show Sources</p>
+                                                <p class="text-sm text-secondary-600">Display document sources in AI responses</p>
+                                            </div>
+                                            <input type="checkbox" checked class="w-4 h-4 text-primary-600 border-secondary-300 rounded focus:ring-primary-500">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{% static 'js/api.js' %}"></script>
+    <script src="{% static 'js/animations.js' %}"></script>
+    <script>
+        // Auth guard — redirect to login if not authenticated
+        if (!api.isAuthenticated()) {
+            window.location.href = '/auth/login/';
+        }
+
+        // Load user data into sidebar
+        const _user = api.getUser();
+        if (_user) {
+            const nameEl = document.getElementById('sidebarUserName');
+            const emailEl = document.getElementById('sidebarUserEmail');
+            if (nameEl) nameEl.textContent = (_user.first_name && _user.last_name) ? `${_user.first_name} ${_user.last_name}` : _user.username;
+            if (emailEl) emailEl.textContent = _user.email || '';
+        }
+
+        // Global logout handler
+        async function handleLogout() {
+            await api.logout();
+            window.location.href = '/auth/login/';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileSidebar = document.getElementById('mobileSidebar');
+            const closeMobileMenu = document.getElementById('closeMobileMenu');
+
+            mobileMenuBtn?.addEventListener('click', () => mobileSidebar.classList.add('open'));
+            closeMobileMenu?.addEventListener('click', () => mobileSidebar.classList.remove('open'));
+            mobileSidebar?.addEventListener('click', (e) => { if (e.target === mobileSidebar) mobileSidebar.classList.remove('open'); });
+
+            if (window.animationController) window.animationController.initializeAll();
+
+            // Settings navigation
+            const navItems = document.querySelectorAll('.settings-nav-item');
+            const sections = document.querySelectorAll('.settings-section');
+
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const targetSection = this.dataset.section;
+
+                    // Update navigation
+                    navItems.forEach(nav => {
+                        nav.classList.remove('active', 'bg-primary-100', 'text-primary-700');
+                        nav.classList.add('text-secondary-600', 'hover:text-secondary-900', 'hover:bg-secondary-100');
+                    });
+
+                    this.classList.add('active', 'bg-primary-100', 'text-primary-700');
+                    this.classList.remove('text-secondary-600', 'hover:text-secondary-900', 'hover:bg-secondary-100');
+
+                    // Update sections
+                    sections.forEach(section => {
+                        section.classList.add('hidden');
+                    });
+
+                    const targetElement = document.getElementById(`${targetSection}-section`);
+                    if (targetElement) {
+                        targetElement.classList.remove('hidden');
+
+                        // Animate section
+                        if (window.animationController) {
+                            window.animationController.triggerAnimation(targetElement, 'fade-in-up');
+                        }
+                    }
+                });
+            });
+
+            // Form submissions — save organization settings via API
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    if (submitBtn && window.animationController) {
+                        window.animationController.showLoadingSpinner(submitBtn);
+                    }
+
+                    try {
+                        const formData = new FormData(this);
+                        const payload = {};
+                        formData.forEach((value, key) => { payload[key] = value; });
+                        await api.patch('/auth/profile/', payload);
+                        if (typeof showToast === 'function') showToast('Organization settings saved', 'success');
+                    } catch (error) {
+                        console.error('Failed to save:', error);
+                        if (typeof showToast === 'function') showToast('Failed to save settings', 'error');
+                    } finally {
+                        if (submitBtn && window.animationController) {
+                            window.animationController.hideLoadingSpinner(submitBtn);
+                        }
+                    }
+                });
+            });
+
+            // Load current profile data
+            loadProfile();
+        });
+
+        async function loadProfile() {
+            try {
+                const user = await api.get('/auth/profile/');
+                const fields = { first_name: user.first_name, last_name: user.last_name, email: user.email, phone_number: user.phone_number, organization: user.organization };
+                Object.entries(fields).forEach(([key, value]) => {
+                    const input = document.querySelector(`[name="${key}"]`);
+                    if (input && value) input.value = value;
+                });
+            } catch (error) {
+                console.error('Failed to load profile:', error);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,472 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KnowVault AI - Intelligent Knowledge Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="{% static 'styles/output.css' %}" rel="stylesheet">
+    <style>
+        /* ── Missing responsive utilities ── */
+        @media (min-width: 640px) {
+            .sm\:text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+            .sm\:text-5xl { font-size: 3rem; line-height: 1; }
+            .sm\:text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+            .sm\:flex-row { flex-direction: row; }
+            .sm\:px-16 { padding-left: 4rem; padding-right: 4rem; }
+            .sm\:py-20 { padding-top: 5rem; padding-bottom: 5rem; }
+            .sm\:inline { display: inline; }
+            .sm\:gap-6 { gap: 1.5rem; }
+        }
+        @media (min-width: 768px) {
+            .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .md\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+            .md\:flex-row { flex-direction: row; }
+            .md\:text-left { text-align: left; }
+            .md\:py-24 { padding-top: 6rem; padding-bottom: 6rem; }
+        }
+        @media (min-width: 1024px) {
+            .lg\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .lg\:text-6xl { font-size: 3.75rem; line-height: 1; }
+            .lg\:pt-44 { padding-top: 11rem; }
+            .lg\:pb-32 { padding-bottom: 8rem; }
+            .lg\:py-32 { padding-top: 8rem; padding-bottom: 8rem; }
+            .lg\:text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+            .lg\:gap-8 { gap: 2rem; }
+        }
+
+        /* ── Hero ── */
+        .hero-gradient {
+            background:
+                radial-gradient(ellipse 80% 50% at 50% -10%, rgba(2,132,199,0.18) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 40% at 85% 50%, rgba(99,102,241,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse 50% 40% at 15% 80%, rgba(2,132,199,0.06) 0%, transparent 50%);
+        }
+        .grid-dots {
+            background-image: radial-gradient(circle, rgba(2,132,199,0.07) 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+
+        /* ── Glass ── */
+        .glass {
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        /* ── Animations ── */
+        .fade-up { opacity: 0; transform: translateY(28px); animation: fadeUp 0.7s cubic-bezier(.22,.61,.36,1) forwards; }
+        .fade-up-d1 { animation-delay: .12s; }
+        .fade-up-d2 { animation-delay: .24s; }
+        .fade-up-d3 { animation-delay: .36s; }
+        .fade-up-d4 { animation-delay: .48s; }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+        .float-slow { animation: floatSlow 7s ease-in-out infinite; }
+        .float-med  { animation: floatMed 5s ease-in-out infinite; }
+        @keyframes floatSlow { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-18px); } }
+        @keyframes floatMed  { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+
+        .pulse-glow {
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+        @keyframes pulseGlow {
+            0%,100% { box-shadow: 0 0 15px rgba(2,132,199,0.15); }
+            50%     { box-shadow: 0 0 30px rgba(2,132,199,0.35); }
+        }
+
+        /* ── Cards ── */
+        .feature-card {
+            transition: all 0.3s cubic-bezier(.22,.61,.36,1);
+        }
+        .feature-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 50px rgba(2,132,199,0.1), 0 8px 20px rgba(0,0,0,0.04);
+            border-color: rgba(2,132,199,0.4);
+        }
+        .feature-card:hover .f-icon {
+            background: rgb(2,132,199);
+            color: white;
+            transform: scale(1.1);
+        }
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.06);
+        }
+        .step-num {
+            transition: all 0.3s ease;
+        }
+        .step-item:hover .step-num {
+            background: rgb(2,132,199);
+            color: white;
+            border-color: rgb(2,132,199);
+            transform: scale(1.1);
+        }
+
+        /* ── CTA gradient ── */
+        .cta-bg {
+            background: linear-gradient(135deg, rgb(15,23,42) 0%, rgb(30,41,59) 50%, rgb(15,23,42) 100%);
+        }
+
+        /* ── Gradient text ── */
+        .gradient-text {
+            background: linear-gradient(135deg, rgb(2,132,199) 0%, rgb(99,102,241) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ── Browser mockup ── */
+        .browser-shadow {
+            box-shadow:
+                0 25px 60px rgba(0,0,0,0.12),
+                0 10px 20px rgba(0,0,0,0.06),
+                0 0 0 1px rgba(0,0,0,0.04);
+        }
+    </style>
+</head>
+<body style="font-family: Inter, system-ui, sans-serif; background: #fff; overflow-x: hidden;">
+
+    <!-- ════════════ NAVBAR ════════════ -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass border-b border-secondary-200" style="border-color: rgba(226,232,240,0.5);">
+        <div style="max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; height: 64px; display: flex; align-items: center; justify-content: space-between;">
+            <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 bg-primary-600 flex items-center justify-center pulse-glow" style="border-radius: 12px;">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                    </svg>
+                </div>
+                <span class="text-lg font-bold text-secondary-900" style="letter-spacing: -0.02em;">KnowVault<span class="text-primary-600">.ai</span></span>
+            </div>
+            <div class="flex items-center space-x-3">
+                <a href="{% url 'login' %}" class="text-sm font-medium text-secondary-600 hover:text-secondary-900" style="padding: 8px 16px; border-radius: 8px; transition: all 0.2s;">Sign In</a>
+                <a href="{% url 'register' %}" class="btn btn-primary btn-sm" style="border-radius: 10px;">Get Started Free</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ════════════ HERO ════════════ -->
+    <section class="relative hero-gradient grid-dots" style="padding-top: 140px; padding-bottom: 80px;">
+        <!-- Floating orbs -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+            <div class="float-slow" style="position:absolute; top:100px; left:8%; width:300px; height:300px; background:rgba(2,132,199,0.08); border-radius:50%; filter:blur(60px);"></div>
+            <div class="float-med" style="position:absolute; top:200px; right:10%; width:220px; height:220px; background:rgba(99,102,241,0.06); border-radius:50%; filter:blur(50px);"></div>
+            <div class="float-slow" style="position:absolute; bottom:50px; left:35%; width:250px; height:250px; background:rgba(2,132,199,0.05); border-radius:50%; filter:blur(60px); animation-delay:2s;"></div>
+        </div>
+
+        <div class="relative" style="max-width: 1280px; margin: 0 auto; padding: 0 1.5rem;">
+            <div style="max-width: 820px; margin: 0 auto; text-align: center;">
+                <!-- Badge -->
+                <div class="fade-up" style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; border-radius: 100px; background: rgba(2,132,199,0.08); border: 1px solid rgba(2,132,199,0.2); margin-bottom: 32px;">
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: rgb(2,132,199); animation: pulseGlow 2s infinite;"></span>
+                    <span class="text-sm font-medium text-primary-700">AI-Powered Knowledge Management</span>
+                </div>
+
+                <!-- Headline -->
+                <h1 class="fade-up fade-up-d1 font-extrabold text-secondary-900" style="font-size: clamp(2.5rem, 6vw, 4.2rem); line-height: 1.08; letter-spacing: -0.03em; margin-bottom: 24px;">
+                    Your knowledge,<br>
+                    <span class="gradient-text">instantly searchable</span>
+                </h1>
+
+                <!-- Subtitle -->
+                <p class="fade-up fade-up-d2 text-secondary-500" style="font-size: clamp(1rem, 2vw, 1.25rem); max-width: 600px; margin: 0 auto 40px; line-height: 1.7;">
+                    Upload documents, ask questions in plain language, and get precise answers backed by your own data. Built for teams that move fast.
+                </p>
+
+                <!-- CTA Buttons -->
+                <div class="fade-up fade-up-d3" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px; margin-bottom: 64px;">
+                    <a href="{% url 'register' %}" class="btn btn-primary btn-lg" style="padding: 14px 32px; border-radius: 14px; box-shadow: 0 8px 24px rgba(2,132,199,0.25); display: inline-flex; align-items: center;">
+                        Start Free Trial
+                        <svg style="width:20px;height:20px;margin-left:8px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                        </svg>
+                    </a>
+                    <a href="#features" class="btn btn-ghost btn-lg text-secondary-600 hover:text-secondary-900" style="display: inline-flex; align-items: center;">
+                        <svg style="width:20px;height:20px;margin-right:8px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        See How It Works
+                    </a>
+                </div>
+
+                <!-- Hero Visual -->
+                <div class="fade-up fade-up-d4" style="position: relative; max-width: 720px; margin: 0 auto;">
+                    <div style="position:absolute; inset:-16px; background:linear-gradient(135deg, rgba(2,132,199,0.15), rgba(99,102,241,0.1)); border-radius:28px; filter:blur(30px);"></div>
+                    <div class="browser-shadow" style="position: relative; background: white; border-radius: 20px; border: 1px solid rgba(226,232,240,0.8); overflow: hidden;">
+                        <!-- Browser bar -->
+                        <div style="display:flex; align-items:center; gap:10px; padding:12px 16px; background:rgb(248,250,252); border-bottom:1px solid rgb(226,232,240);">
+                            <div style="display:flex; gap:6px;">
+                                <div style="width:12px;height:12px;border-radius:50%;background:#f87171;"></div>
+                                <div style="width:12px;height:12px;border-radius:50%;background:#fbbf24;"></div>
+                                <div style="width:12px;height:12px;border-radius:50%;background:#34d399;"></div>
+                            </div>
+                            <div style="flex:1; display:flex; justify-content:center;">
+                                <div style="padding:4px 16px; background:white; border-radius:8px; border:1px solid rgb(226,232,240); font-size:12px; color:rgb(148,163,184); font-family:'JetBrains Mono',monospace;">knowvault.ai/query/chat</div>
+                            </div>
+                        </div>
+                        <!-- Chat UI -->
+                        <div style="padding:24px; display:flex; flex-direction:column; gap:16px;">
+                            <!-- User message -->
+                            <div style="display:flex; justify-content:flex-end;">
+                                <div style="background:rgb(2,132,199); color:white; padding:12px 18px; border-radius:18px 18px 4px 18px; max-width:420px; font-size:14px; line-height:1.5;">
+                                    What are the key findings from our Q4 financial report?
+                                </div>
+                            </div>
+                            <!-- AI response -->
+                            <div style="display:flex; justify-content:flex-start; gap:10px;">
+                                <div style="width:32px;height:32px;min-width:32px;background:rgba(2,132,199,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:2px;">
+                                    <svg style="width:16px;height:16px;color:rgb(2,132,199);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                                </div>
+                                <div style="background:rgb(248,250,252); border:1px solid rgb(226,232,240); padding:14px 18px; border-radius:4px 18px 18px 18px; max-width:460px; font-size:14px; line-height:1.6; color:rgb(51,65,85);">
+                                    <p style="margin:0 0 10px 0;">Based on the <strong>Q4 Financial Report</strong> (uploaded Dec 15):</p>
+                                    <div style="display:flex;flex-direction:column;gap:6px;">
+                                        <div style="display:flex;gap:8px;align-items:flex-start;">
+                                            <span style="color:rgb(2,132,199);font-weight:600;min-width:16px;">1.</span>
+                                            <span>Revenue grew <strong>23% YoY</strong> to $4.2M</span>
+                                        </div>
+                                        <div style="display:flex;gap:8px;align-items:flex-start;">
+                                            <span style="color:rgb(2,132,199);font-weight:600;min-width:16px;">2.</span>
+                                            <span>Operating margin improved to <strong>18.5%</strong></span>
+                                        </div>
+                                        <div style="display:flex;gap:8px;align-items:flex-start;">
+                                            <span style="color:rgb(2,132,199);font-weight:600;min-width:16px;">3.</span>
+                                            <span>Customer retention rate at <strong>94%</strong></span>
+                                        </div>
+                                    </div>
+                                    <div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(226,232,240,0.6);display:flex;align-items:center;gap:6px;font-size:12px;color:rgb(148,163,184);">
+                                        <svg style="width:12px;height:12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                        Source: Q4-Financial-Report.pdf, pages 3-7
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════ STATS BAR ════════════ -->
+    <section style="position:relative; z-index:10; max-width:960px; margin:-32px auto 0; padding:0 1.5rem;">
+        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:16px;">
+            <div class="stat-card" style="background:white; border-radius:16px; border:1px solid rgba(226,232,240,0.7); padding:24px 16px; text-align:center; box-shadow:0 4px 16px rgba(0,0,0,0.04);">
+                <div style="font-size:1.75rem; font-weight:800; color:rgb(15,23,42);">10x</div>
+                <div style="font-size:0.75rem; color:rgb(100,116,139); margin-top:4px;">Faster Answers</div>
+            </div>
+            <div class="stat-card" style="background:white; border-radius:16px; border:1px solid rgba(226,232,240,0.7); padding:24px 16px; text-align:center; box-shadow:0 4px 16px rgba(0,0,0,0.04);">
+                <div style="font-size:1.75rem; font-weight:800; color:rgb(15,23,42);">99.5%</div>
+                <div style="font-size:0.75rem; color:rgb(100,116,139); margin-top:4px;">Accuracy Rate</div>
+            </div>
+            <div class="stat-card" style="background:white; border-radius:16px; border:1px solid rgba(226,232,240,0.7); padding:24px 16px; text-align:center; box-shadow:0 4px 16px rgba(0,0,0,0.04);">
+                <div style="font-size:1.75rem; font-weight:800; color:rgb(15,23,42);">50+</div>
+                <div style="font-size:0.75rem; color:rgb(100,116,139); margin-top:4px;">File Formats</div>
+            </div>
+            <div class="stat-card" style="background:white; border-radius:16px; border:1px solid rgba(226,232,240,0.7); padding:24px 16px; text-align:center; box-shadow:0 4px 16px rgba(0,0,0,0.04);">
+                <div style="font-size:1.75rem; font-weight:800; color:rgb(15,23,42);">256-bit</div>
+                <div style="font-size:0.75rem; color:rgb(100,116,139); margin-top:4px;">Encryption</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════ FEATURES ════════════ -->
+    <section id="features" style="padding: 96px 0 80px;">
+        <div style="max-width: 1280px; margin: 0 auto; padding: 0 1.5rem;">
+            <!-- Section header -->
+            <div style="text-align:center; margin-bottom:64px;">
+                <p class="text-sm font-semibold text-primary-600" style="text-transform:uppercase; letter-spacing:0.1em; margin-bottom:12px;">Features</p>
+                <h2 class="font-bold text-secondary-900" style="font-size: clamp(1.75rem, 4vw, 2.5rem); margin-bottom:16px; letter-spacing:-0.02em;">
+                    Everything you need to unlock<br> your organization's knowledge
+                </h2>
+                <p class="text-secondary-500" style="max-width:500px; margin:0 auto;">Stop digging through folders. Start asking questions.</p>
+            </div>
+
+            <!-- Feature grid — always 3 columns on desktop, 2 on tablet, 1 on mobile -->
+            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:24px;">
+                <!-- Feature 1 -->
+                <div class="feature-card" style="padding:28px; border-radius:20px; border:1px solid rgb(226,232,240); background:white;">
+                    <div class="f-icon" style="width:48px;height:48px;background:rgba(2,132,199,0.08);color:rgb(2,132,199);border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;transition:all 0.3s;">
+                        <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-secondary-900" style="font-size:1.1rem; margin-bottom:8px;">AI Chat Interface</h3>
+                    <p class="text-sm text-secondary-500" style="line-height:1.65;">Ask questions in natural language and get precise answers sourced directly from your uploaded documents.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="feature-card" style="padding:28px; border-radius:20px; border:1px solid rgb(226,232,240); background:white;">
+                    <div class="f-icon" style="width:48px;height:48px;background:rgba(2,132,199,0.08);color:rgb(2,132,199);border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;transition:all 0.3s;">
+                        <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-secondary-900" style="font-size:1.1rem; margin-bottom:8px;">Smart Document Upload</h3>
+                    <p class="text-sm text-secondary-500" style="line-height:1.65;">Drag and drop PDFs, Word docs, spreadsheets, and more. Our AI processes and indexes them automatically.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="feature-card" style="padding:28px; border-radius:20px; border:1px solid rgb(226,232,240); background:white;">
+                    <div class="f-icon" style="width:48px;height:48px;background:rgba(2,132,199,0.08);color:rgb(2,132,199);border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;transition:all 0.3s;">
+                        <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-secondary-900" style="font-size:1.1rem; margin-bottom:8px;">Analytics Dashboard</h3>
+                    <p class="text-sm text-secondary-500" style="line-height:1.65;">Track usage patterns, popular queries, and document engagement with real-time analytics and reports.</p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="feature-card" style="padding:28px; border-radius:20px; border:1px solid rgb(226,232,240); background:white;">
+                    <div class="f-icon" style="width:48px;height:48px;background:rgba(2,132,199,0.08);color:rgb(2,132,199);border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;transition:all 0.3s;">
+                        <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-secondary-900" style="font-size:1.1rem; margin-bottom:8px;">Enterprise Security</h3>
+                    <p class="text-sm text-secondary-500" style="line-height:1.65;">256-bit encryption, MFA, role-based access, and full audit trails. Your data never leaves your control.</p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="feature-card" style="padding:28px; border-radius:20px; border:1px solid rgb(226,232,240); background:white;">
+                    <div class="f-icon" style="width:48px;height:48px;background:rgba(2,132,199,0.08);color:rgb(2,132,199);border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;transition:all 0.3s;">
+                        <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-secondary-900" style="font-size:1.1rem; margin-bottom:8px;">Semantic Search</h3>
+                    <p class="text-sm text-secondary-500" style="line-height:1.65;">Go beyond keyword matching. Our AI understands context and meaning to find exactly what you need.</p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="feature-card" style="padding:28px; border-radius:20px; border:1px solid rgb(226,232,240); background:white;">
+                    <div class="f-icon" style="width:48px;height:48px;background:rgba(2,132,199,0.08);color:rgb(2,132,199);border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;transition:all 0.3s;">
+                        <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-semibold text-secondary-900" style="font-size:1.1rem; margin-bottom:8px;">Team Collaboration</h3>
+                    <p class="text-sm text-secondary-500" style="line-height:1.65;">Share knowledge across your organization. Manage teams, permissions, and shared document collections.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════ HOW IT WORKS ════════════ -->
+    <section style="padding: 96px 0; background: rgb(248,250,252);">
+        <div style="max-width: 1280px; margin: 0 auto; padding: 0 1.5rem;">
+            <div style="text-align:center; margin-bottom:64px;">
+                <p class="text-sm font-semibold text-primary-600" style="text-transform:uppercase; letter-spacing:0.1em; margin-bottom:12px;">How It Works</p>
+                <h2 class="font-bold text-secondary-900" style="font-size: clamp(1.75rem, 4vw, 2.5rem); letter-spacing:-0.02em;">From documents to answers in minutes</h2>
+            </div>
+
+            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:40px; max-width:900px; margin:0 auto;">
+                <!-- Step 1 -->
+                <div class="step-item" style="text-align:center;">
+                    <div class="step-num" style="width:64px;height:64px;background:white;border:2px solid rgba(2,132,199,0.3);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 4px 12px rgba(0,0,0,0.04);transition:all 0.3s;">
+                        <span style="font-size:1.5rem;font-weight:800;color:rgb(2,132,199);">1</span>
+                    </div>
+                    <h3 class="font-semibold text-secondary-900" style="font-size:1.1rem;margin-bottom:8px;">Upload Documents</h3>
+                    <p class="text-sm text-secondary-500" style="line-height:1.6;">Drag and drop your files. We support PDF, DOCX, XLSX, PPTX, TXT, and Markdown.</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="step-item" style="text-align:center;">
+                    <div class="step-num" style="width:64px;height:64px;background:white;border:2px solid rgba(2,132,199,0.3);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 4px 12px rgba(0,0,0,0.04);transition:all 0.3s;">
+                        <span style="font-size:1.5rem;font-weight:800;color:rgb(2,132,199);">2</span>
+                    </div>
+                    <h3 class="font-semibold text-secondary-900" style="font-size:1.1rem;margin-bottom:8px;">AI Processes</h3>
+                    <p class="text-sm text-secondary-500" style="line-height:1.6;">Our AI reads, indexes, and understands the content of every document automatically.</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="step-item" style="text-align:center;">
+                    <div class="step-num" style="width:64px;height:64px;background:white;border:2px solid rgba(2,132,199,0.3);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 4px 12px rgba(0,0,0,0.04);transition:all 0.3s;">
+                        <span style="font-size:1.5rem;font-weight:800;color:rgb(2,132,199);">3</span>
+                    </div>
+                    <h3 class="font-semibold text-secondary-900" style="font-size:1.1rem;margin-bottom:8px;">Ask Anything</h3>
+                    <p class="text-sm text-secondary-500" style="line-height:1.6;">Query your knowledge base in plain English. Get accurate answers with source citations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════ CTA ════════════ -->
+    <section style="padding: 96px 0;">
+        <div style="max-width: 1280px; margin: 0 auto; padding: 0 1.5rem;">
+            <div class="cta-bg" style="position:relative; overflow:hidden; border-radius:28px; padding:72px 40px; text-align:center;">
+                <!-- Decorative glow -->
+                <div style="position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:500px;height:250px;background:rgba(2,132,199,0.12);border-radius:50%;filter:blur(80px);"></div>
+                <div style="position:absolute;bottom:-50px;right:-50px;width:300px;height:300px;background:rgba(99,102,241,0.06);border-radius:50%;filter:blur(60px);"></div>
+
+                <div style="position:relative;">
+                    <h2 style="font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight:800; color:white; margin-bottom:16px; letter-spacing:-0.02em; line-height:1.2;">
+                        Ready to transform how your<br> team accesses knowledge?
+                    </h2>
+                    <p style="color:rgb(148,163,184); max-width:480px; margin:0 auto 32px; font-size:1rem; line-height:1.7;">
+                        Join teams that have cut their document search time by 90%. Free to start, no credit card required.
+                    </p>
+                    <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:16px;">
+                        <a href="{% url 'register' %}" class="btn btn-primary btn-lg" style="padding:14px 32px; border-radius:14px; box-shadow:0 8px 24px rgba(2,132,199,0.3); display:inline-flex; align-items:center;">
+                            Get Started Free
+                            <svg style="width:20px;height:20px;margin-left:8px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                            </svg>
+                        </a>
+                        <a href="{% url 'login' %}" style="font-size:14px; font-weight:500; color:rgb(148,163,184); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='rgb(148,163,184)'">
+                            Already have an account? Sign in
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════ FOOTER ════════════ -->
+    <footer style="border-top:1px solid rgb(226,232,240); padding:40px 0;">
+        <div style="max-width:1280px; margin:0 auto; padding:0 1.5rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+            <div class="flex items-center space-x-3">
+                <div style="width:32px;height:32px;background:rgb(2,132,199);border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                    <svg style="width:16px;height:16px;color:white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                    </svg>
+                </div>
+                <span class="text-sm font-semibold text-secondary-900">KnowVault<span class="text-primary-600">.ai</span></span>
+            </div>
+            <p style="font-size:14px; color:rgb(148,163,184);">&copy; 2025 KnowVault AI. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Mobile responsive overrides -->
+    <style>
+        @media (max-width: 768px) {
+            .browser-shadow { margin: 0 -8px; }
+            section#features > div > div:last-child,
+            section:nth-of-type(4) > div > div:last-child {
+                grid-template-columns: 1fr !important;
+            }
+            section:nth-of-type(2) > div {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+    </style>
+
+    <!-- Smooth scroll -->
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', function(e) {
+                e.preventDefault();
+                const t = document.querySelector(this.getAttribute('href'));
+                if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+    </script>
+</body>
+</html>

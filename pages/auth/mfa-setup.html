@@ -1,0 +1,493 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MFA Setup - KnowVault AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="{% static 'styles/output.css' %}" rel="stylesheet">
+    <style>
+        * { font-family: Inter, system-ui, sans-serif; }
+        .auth-layout { display: flex; min-height: 100vh; }
+        .auth-brand { display: none; position: relative; flex: 1; background: linear-gradient(135deg, rgb(15,23,42) 0%, rgb(30,41,59) 50%, rgb(15,23,42) 100%); overflow: hidden; }
+        .auth-form-side { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 24px; background: white; }
+        @media (min-width: 1024px) {
+            .auth-brand { display: flex; align-items: center; justify-content: center; }
+        }
+        .brand-glow { position: absolute; width: 400px; height: 400px; border-radius: 50%; filter: blur(100px); }
+        .glass-card { background: rgba(255,255,255,0.06); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 32px; }
+        .fade-up { opacity: 0; transform: translateY(20px); animation: fadeUp 0.6s ease forwards; }
+        .fd1 { animation-delay: .1s; } .fd2 { animation-delay: .2s; } .fd3 { animation-delay: .3s; } .fd4 { animation-delay: .4s; }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+        .float-anim { animation: floatY 6s ease-in-out infinite; }
+        @keyframes floatY { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        .auth-input { width: 100%; padding: 12px 16px 12px 44px; border: 1.5px solid rgb(226,232,240); border-radius: 12px; font-size: 14px; color: rgb(15,23,42); background: rgb(248,250,252); transition: all 0.2s; outline: none; }
+        .auth-input:focus { border-color: rgb(2,132,199); background: white; box-shadow: 0 0 0 3px rgba(2,132,199,0.1); }
+        .auth-input::placeholder { color: rgb(148,163,184); }
+        .auth-input-center { width: 100%; padding: 16px; border: 1.5px solid rgb(226,232,240); border-radius: 12px; font-size: 28px; font-weight: 700; color: rgb(15,23,42); background: rgb(248,250,252); transition: all 0.2s; outline: none; text-align: center; letter-spacing: 0.5em; font-family: 'JetBrains Mono', monospace; }
+        .auth-input-center:focus { border-color: rgb(2,132,199); background: white; box-shadow: 0 0 0 3px rgba(2,132,199,0.1); }
+        .auth-input-center::placeholder { color: rgb(148,163,184); letter-spacing: 0.3em; font-size: 20px; font-weight: 400; }
+        .input-icon-abs { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: rgb(148,163,184); pointer-events: none; }
+        .input-wrap { position: relative; }
+        .auth-btn { width: 100%; padding: 14px; border: none; border-radius: 14px; background: rgb(2,132,199); color: white; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .auth-btn:hover { background: rgb(3,105,161); box-shadow: 0 8px 24px rgba(2,132,199,0.3); transform: translateY(-1px); }
+        .auth-btn:active { transform: translateY(0); }
+        .auth-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .auth-btn-outline { width: 100%; padding: 14px; border: 1.5px solid rgb(226,232,240); border-radius: 14px; background: white; color: rgb(15,23,42); font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+        .auth-btn-outline:hover { border-color: rgb(2,132,199); color: rgb(2,132,199); background: rgb(240,249,255); }
+        .auth-btn-outline:disabled { opacity: 0.6; cursor: not-allowed; }
+        .auth-btn-ghost { width: 100%; padding: 14px; border: none; border-radius: 14px; background: transparent; color: rgb(100,116,139); font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+        .auth-btn-ghost:hover { color: rgb(15,23,42); background: rgb(248,250,252); }
+        .auth-link { color: rgb(2,132,199); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+        .auth-link:hover { color: rgb(3,105,161); }
+        .step-panel { display: none; }
+        .step-panel.active { display: block; }
+        .secret-key-box { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: rgb(248,250,252); border: 1.5px solid rgb(226,232,240); border-radius: 10px; }
+        .secret-key-box code { flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 500; color: rgb(15,23,42); letter-spacing: 0.05em; }
+        .secret-key-box button { padding: 6px 12px; border: 1.5px solid rgb(226,232,240); border-radius: 8px; background: white; color: rgb(100,116,139); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+        .secret-key-box button:hover { border-color: rgb(2,132,199); color: rgb(2,132,199); }
+        .backup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .backup-code-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: rgb(248,250,252); border: 1.5px solid rgb(226,232,240); border-radius: 10px; }
+        .backup-code-item code { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500; color: rgb(15,23,42); }
+        .backup-code-item button { background: none; border: none; color: rgb(148,163,184); cursor: pointer; padding: 2px; transition: color 0.2s; }
+        .backup-code-item button:hover { color: rgb(2,132,199); }
+        .info-box { padding: 14px 16px; border-radius: 12px; font-size: 13px; line-height: 1.6; }
+        .info-box-blue { background: rgb(240,249,255); border: 1.5px solid rgb(186,230,253); color: rgb(12,74,110); }
+        .info-box-amber { background: rgb(255,251,235); border: 1.5px solid rgb(253,230,138); color: rgb(133,77,14); }
+        .info-box-green { background: rgb(240,253,244); border: 1.5px solid rgb(187,247,208); color: rgb(22,101,52); }
+        .qr-placeholder { width: 160px; height: 160px; background: rgb(248,250,252); border: 2px solid rgb(226,232,240); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+        .step-indicator { display: flex; align-items: center; gap: 8px; margin-bottom: 28px; }
+        .step-dot { width: 8px; height: 8px; border-radius: 50%; background: rgb(226,232,240); transition: all 0.3s; }
+        .step-dot.active { background: rgb(2,132,199); width: 24px; border-radius: 4px; }
+        .step-dot.done { background: rgb(34,197,94); }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body style="margin:0; background:white;">
+
+<div class="auth-layout">
+    <!-- Left Brand Panel -->
+    <div class="auth-brand">
+        <div class="brand-glow" style="top:-100px; left:-100px; background:rgba(2,132,199,0.15);"></div>
+        <div class="brand-glow" style="bottom:-50px; right:-50px; background:rgba(99,102,241,0.1);"></div>
+
+        <div style="position:relative; z-index:1; text-align:center; padding:40px; max-width:480px;">
+            <!-- Logo -->
+            <div class="float-anim" style="width:72px;height:72px;background:rgba(2,132,199,0.15);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 32px;">
+                <svg style="width:36px;height:36px;color:rgb(56,189,248);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                </svg>
+            </div>
+            <h2 style="font-size:2rem;font-weight:800;color:white;margin:0 0 12px;letter-spacing:-0.02em;">Extra layer of <span style="color:rgb(56,189,248);">security</span></h2>
+            <p style="color:rgb(148,163,184);font-size:1.05rem;line-height:1.7;margin:0 0 40px;">Two-factor authentication adds a powerful shield to your account, keeping your knowledge base safe.</p>
+
+            <!-- Info card -->
+            <div class="glass-card" style="text-align:left;">
+                <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:20px;">
+                    <div style="width:36px;height:36px;border-radius:10px;background:rgba(56,189,248,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <svg style="width:18px;height:18px;color:rgb(56,189,248);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div style="color:white;font-weight:600;font-size:14px;margin-bottom:4px;">Authenticator App</div>
+                        <div style="color:rgb(148,163,184);font-size:13px;line-height:1.6;">Use Google Authenticator, Authy, or any TOTP-compatible app.</div>
+                    </div>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:20px;">
+                    <div style="width:36px;height:36px;border-radius:10px;background:rgba(99,102,241,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <svg style="width:18px;height:18px;color:rgb(165,180,252);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div style="color:white;font-weight:600;font-size:14px;margin-bottom:4px;">6-Digit Codes</div>
+                        <div style="color:rgb(148,163,184);font-size:13px;line-height:1.6;">Codes refresh every 30 seconds for maximum protection.</div>
+                    </div>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:14px;">
+                    <div style="width:36px;height:36px;border-radius:10px;background:rgba(52,211,153,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <svg style="width:18px;height:18px;color:rgb(52,211,153);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div style="color:white;font-weight:600;font-size:14px;margin-bottom:4px;">Backup Codes</div>
+                        <div style="color:rgb(148,163,184);font-size:13px;line-height:1.6;">Get emergency backup codes in case you lose your device.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Form Panel -->
+    <div class="auth-form-side">
+        <div style="width:100%;max-width:460px;">
+            <!-- Mobile logo -->
+            <div class="fade-up" style="text-align:center;margin-bottom:8px;">
+                <div style="display:inline-flex;align-items:center;gap:10px;margin-bottom:24px;">
+                    <div style="width:36px;height:36px;background:rgb(2,132,199);border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                        <svg style="width:20px;height:20px;color:white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                    </div>
+                    <span style="font-size:18px;font-weight:700;color:rgb(15,23,42);">KnowVault<span style="color:rgb(2,132,199);">.ai</span></span>
+                </div>
+            </div>
+
+            <!-- Step Indicator -->
+            <div class="step-indicator fade-up" id="stepIndicator">
+                <div class="step-dot active" id="dot1"></div>
+                <div class="step-dot" id="dot2"></div>
+                <div class="step-dot" id="dot3"></div>
+                <div class="step-dot" id="dot4"></div>
+            </div>
+
+            <!-- ============ Step 1: Setup ============ -->
+            <div id="setupStep" class="step-panel active">
+                <div class="fade-up fd1" style="margin-bottom:24px;">
+                    <h1 style="font-size:1.75rem;font-weight:800;color:rgb(15,23,42);margin:0 0 8px;letter-spacing:-0.02em;">Set Up Two-Factor Auth</h1>
+                    <p style="color:rgb(100,116,139);font-size:0.95rem;margin:0;">Secure your account with an additional layer of protection</p>
+                </div>
+
+                <!-- Step 1 instructions -->
+                <div class="fade-up fd2 info-box info-box-blue" style="margin-bottom:20px;">
+                    <div style="font-weight:600;margin-bottom:6px;">Step 1: Install an Authenticator App</div>
+                    <div>Download one of these on your mobile device:</div>
+                    <ul style="margin:8px 0 0;padding-left:16px;">
+                        <li>Google Authenticator</li>
+                        <li>Microsoft Authenticator</li>
+                        <li>Authy</li>
+                        <li>1Password</li>
+                    </ul>
+                </div>
+
+                <!-- Step 2: QR + Secret -->
+                <div class="fade-up fd3" style="margin-bottom:20px;">
+                    <div style="font-size:13px;font-weight:600;color:rgb(51,65,85);margin-bottom:12px;">Step 2: Scan QR Code or Enter Secret</div>
+                    <p style="font-size:13px;color:rgb(100,116,139);margin:0 0 16px;">Use your authenticator app to scan or manually enter the key below:</p>
+
+                    <!-- QR Code -->
+                    <div class="qr-placeholder" style="margin-bottom:16px;">
+                        <svg style="width:64px;height:64px;color:rgb(148,163,184);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
+                        </svg>
+                    </div>
+
+                    <!-- Secret Key -->
+                    <div style="font-size:12px;font-weight:600;color:rgb(100,116,139);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em;">Manual Entry Key</div>
+                    <div class="secret-key-box">
+                        <code id="secretKey">JBSWY3DPEHPK3PXP</code>
+                        <button type="button" onclick="copySecret()">
+                            <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            <span id="copyText">Copy</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="fade-up fd4">
+                    <button onclick="showVerifyStep()" class="auth-btn">
+                        Continue to Verification
+                        <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ============ Step 2: Verify ============ -->
+            <div id="verifyStep" class="step-panel">
+                <div style="margin-bottom:24px;">
+                    <h1 style="font-size:1.75rem;font-weight:800;color:rgb(15,23,42);margin:0 0 8px;letter-spacing:-0.02em;">Verify Your Setup</h1>
+                    <p style="color:rgb(100,116,139);font-size:0.95rem;margin:0;">Enter the 6-digit code from your authenticator app</p>
+                </div>
+
+                <form id="verifyForm" style="display:flex;flex-direction:column;gap:20px;">
+                    <!-- General Error -->
+                    <div class="general-error hidden p-4 bg-error-50 border border-error-200 rounded-lg text-error-700 text-sm"></div>
+
+                    <!-- Verification Code -->
+                    <div>
+                        <label style="display:block;font-size:13px;font-weight:600;color:rgb(51,65,85);margin-bottom:6px;">Verification Code</label>
+                        <input
+                            type="text"
+                            id="verificationCode"
+                            name="verificationCode"
+                            class="auth-input-center"
+                            placeholder="000000"
+                            maxlength="6"
+                            required
+                        >
+                        <div class="input-error hidden"><svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span></span></div>
+                        <p style="font-size:12px;color:rgb(148,163,184);margin:6px 0 0;">Enter the 6-digit code from your authenticator app</p>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                        <button type="submit" class="auth-btn" data-original-text="Verify Code">
+                            <span class="spinner hidden"><svg class="w-4 h-4" style="animation:spin 1s linear infinite;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></span>
+                            <span class="button-text">Verify Code</span>
+                        </button>
+                        <button type="button" onclick="showSetupStep()" class="auth-btn-ghost">
+                            <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                            Back to Setup
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ============ Step 3: Backup Codes ============ -->
+            <div id="backupStep" class="step-panel">
+                <div style="margin-bottom:24px;">
+                    <h1 style="font-size:1.75rem;font-weight:800;color:rgb(15,23,42);margin:0 0 8px;letter-spacing:-0.02em;">Save Your Backup Codes</h1>
+                    <p style="color:rgb(100,116,139);font-size:0.95rem;margin:0;">Store these codes safely. Use them if you lose your device.</p>
+                </div>
+
+                <!-- Warning -->
+                <div class="info-box info-box-amber" style="margin-bottom:20px;">
+                    <div style="display:flex;align-items:flex-start;gap:10px;">
+                        <svg style="width:18px;height:18px;flex-shrink:0;margin-top:1px;color:rgb(217,119,6);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                        <div>
+                            <div style="font-weight:600;margin-bottom:4px;">Important</div>
+                            <ul style="margin:0;padding-left:16px;line-height:1.8;">
+                                <li>Each code can only be used once</li>
+                                <li>Store them in a secure location</li>
+                                <li>Don't share them with anyone</li>
+                                <li>You won't be able to see them again</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Backup Codes Grid -->
+                <div style="margin-bottom:24px;">
+                    <div style="font-size:13px;font-weight:600;color:rgb(51,65,85);margin-bottom:10px;">Your Backup Codes</div>
+                    <div id="backupCodes" class="backup-grid">
+                        <!-- Backup codes generated by JS -->
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div style="display:flex;flex-direction:column;gap:10px;">
+                    <button onclick="showCompleteStep()" class="auth-btn">
+                        I've Saved My Backup Codes
+                        <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    </button>
+                    <button onclick="downloadBackupCodes()" class="auth-btn-outline">
+                        <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        Download as Text File
+                    </button>
+                </div>
+            </div>
+
+            <!-- ============ Step 4: Complete ============ -->
+            <div id="completeStep" class="step-panel">
+                <div style="text-align:center;">
+                    <!-- Success Icon -->
+                    <div style="width:72px;height:72px;background:rgb(220,252,231);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;">
+                        <svg style="width:36px;height:36px;color:rgb(22,163,74);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h1 style="font-size:1.75rem;font-weight:800;color:rgb(15,23,42);margin:0 0 8px;letter-spacing:-0.02em;">Setup Complete!</h1>
+                    <p style="color:rgb(100,116,139);font-size:0.95rem;margin:0 0 24px;">Two-factor authentication has been successfully enabled for your account.</p>
+                </div>
+
+                <!-- Success Message -->
+                <div class="info-box info-box-green" style="margin-bottom:24px;text-align:center;">
+                    Your account is now more secure. You'll need to enter a code from your authenticator app each time you sign in.
+                </div>
+
+                <!-- Actions -->
+                <div style="display:flex;flex-direction:column;gap:10px;">
+                    <a href="/dashboard/" class="auth-btn" style="text-decoration:none;">
+                        Continue to Dashboard
+                        <svg style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                    </a>
+                    <a href="/settings/security/" class="auth-btn-outline">
+                        Manage Security Settings
+                    </a>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div style="text-align:center;margin-top:40px;">
+                <p style="font-size:12px;color:rgb(148,163,184);margin:0;">&copy; 2025 KnowVault AI. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/api.js' %}"></script>
+<script src="{% static 'js/validation.js' %}"></script>
+<script src="{% static 'js/animations.js' %}"></script>
+<script>
+    const mfaValidationSchema = {
+        verificationCode: [
+            ValidationRules.required('Verification code is required'),
+            ValidationRules.mfaCode('Please enter a valid 6-digit code')
+        ]
+    };
+
+    let backupCodes = [];
+    let copiedBackupCode = null;
+
+    document.addEventListener('DOMContentLoaded', async function() {
+        // Fetch MFA setup data from API
+        try {
+            const data = await api.get('/auth/mfa/setup/');
+            const secretKeyEl = document.getElementById('secretKey');
+            if (secretKeyEl) secretKeyEl.textContent = data.secret;
+        } catch (error) {
+            showToast('Failed to initialize MFA setup.', 'error');
+        }
+
+        const form = document.getElementById('verifyForm');
+        const formHandler = new FormHandler(form, mfaValidationSchema);
+
+        const codeInput = document.getElementById('verificationCode');
+        codeInput.addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '').slice(0, 6);
+        });
+
+        formHandler.onSubmit = async function(values) {
+            try {
+                const data = await api.post('/auth/mfa/verify/', { code: values.verificationCode });
+                backupCodes = data.backup_codes || [];
+                generateBackupCodes();
+                showBackupStep();
+            } catch (error) {
+                const msg = error.data?.detail || 'Invalid verification code. Please try again.';
+                this.showFieldError('verificationCode', msg);
+            }
+        };
+
+        generateBackupCodes();
+    });
+
+    function updateStepDots(activeIndex) {
+        for (let i = 1; i <= 4; i++) {
+            const dot = document.getElementById('dot' + i);
+            dot.className = 'step-dot';
+            if (i < activeIndex) dot.classList.add('done');
+            if (i === activeIndex) dot.classList.add('active');
+        }
+    }
+
+    function showSetupStep() {
+        hideAllSteps();
+        document.getElementById('setupStep').classList.add('active');
+        updateStepDots(1);
+        animateStepTransition();
+    }
+
+    function showVerifyStep() {
+        hideAllSteps();
+        document.getElementById('verifyStep').classList.add('active');
+        updateStepDots(2);
+        animateStepTransition();
+    }
+
+    function showBackupStep() {
+        hideAllSteps();
+        document.getElementById('backupStep').classList.add('active');
+        updateStepDots(3);
+        animateStepTransition();
+    }
+
+    function showCompleteStep() {
+        hideAllSteps();
+        document.getElementById('completeStep').classList.add('active');
+        updateStepDots(4);
+        animateStepTransition();
+    }
+
+    function hideAllSteps() {
+        const steps = ['setupStep', 'verifyStep', 'backupStep', 'completeStep'];
+        steps.forEach(step => {
+            document.getElementById(step).classList.remove('active');
+        });
+    }
+
+    function animateStepTransition() {
+        const activeStep = document.querySelector('.step-panel.active');
+        if (activeStep) {
+            activeStep.style.opacity = '0';
+            activeStep.style.transform = 'translateY(20px)';
+
+            requestAnimationFrame(() => {
+                activeStep.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+                activeStep.style.opacity = '1';
+                activeStep.style.transform = 'translateY(0)';
+            });
+        }
+    }
+
+    async function copySecret() {
+        const secretKey = document.getElementById('secretKey').textContent;
+        const copyButton = document.getElementById('copyText');
+
+        try {
+            await copyToClipboard(secretKey);
+            copyButton.textContent = 'Copied!';
+            setTimeout(() => {
+                copyButton.textContent = 'Copy';
+            }, 2000);
+        } catch (error) {
+            console.error('Failed to copy secret:', error);
+            showToast('Failed to copy secret key', 'error');
+        }
+    }
+
+    function generateBackupCodes() {
+        const container = document.getElementById('backupCodes');
+        container.innerHTML = '';
+
+        backupCodes.forEach((code, index) => {
+            const codeElement = document.createElement('div');
+            codeElement.className = 'backup-code-item';
+            codeElement.innerHTML = `
+                <code>${code}</code>
+                <button onclick="copyBackupCode('${code}', ${index})" title="Copy code">
+                    <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                    </svg>
+                    <span id="copyBackupText${index}" style="font-size:11px;">${copiedBackupCode === index ? 'Copied!' : 'Copy'}</span>
+                </button>
+            `;
+            container.appendChild(codeElement);
+        });
+    }
+
+    async function copyBackupCode(code, index) {
+        try {
+            await copyToClipboard(code);
+            copiedBackupCode = index;
+            document.getElementById(`copyBackupText${index}`).textContent = 'Copied!';
+            setTimeout(() => {
+                copiedBackupCode = null;
+                document.getElementById(`copyBackupText${index}`).textContent = 'Copy';
+            }, 2000);
+        } catch (error) {
+            console.error('Failed to copy backup code:', error);
+            showToast('Failed to copy backup code', 'error');
+        }
+    }
+
+    function downloadBackupCodes() {
+        const element = document.createElement('a');
+        const file = new Blob([backupCodes.join('\n')], { type: 'text/plain' });
+        element.href = URL.createObjectURL(file);
+        element.download = 'knowvault-backup-codes.txt';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+
+        showToast('Backup codes downloaded successfully!', 'success');
+    }
+</script>
+</body>
+</html>
